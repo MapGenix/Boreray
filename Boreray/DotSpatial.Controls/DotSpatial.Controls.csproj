@@ -115,6 +115,7 @@
     <Compile Include="Docking\DockablePanelEventArgs.cs" />
     <Compile Include="Docking\DockablePanel.cs" />
     <Compile Include="Extension.cs" />
+    <Compile Include="Extensions\LabelLayerHelper.cs" />
     <Compile Include="FeatureIdentifier.Designer.cs">
       <DependentUpon>FeatureIdentifier.cs</DependentUpon>
     </Compile>

@@ -434,7 +434,7 @@ namespace DotSpatial.Controls
             var symb = selected ? category.SelectionSymbolizer : category.Symbolizer;
 
             //Gets the features text and calculate the label size
-            string txt = GetLabelText(f, category, symb);
+            string txt = LabelLayerHelper.GetLabelText(f, category, symb);
             if (txt == null) return;
             Func<SizeF> labelSize = () => g.MeasureString(txt, _caches.GetFont(symb));
 
@@ -530,7 +530,7 @@ namespace DotSpatial.Controls
             var symb = selected ? category.SelectionSymbolizer : category.Symbolizer;
 
             //Gets the features text and calculate the label size
-            string txt = GetLabelText(f, category, symb);
+            string txt = LabelLayerHelper.GetLabelText(f, category, symb);
             if (txt == null) return;
 
             Func<SizeF> labelSize = () => g.MeasureString(txt, _caches.GetFont(symb));
@@ -570,7 +570,7 @@ namespace DotSpatial.Controls
             var symb = selected? category.SelectionSymbolizer : category.Symbolizer;
 
             //Gets the features text and calculate the label size
-            string txt = GetLabelText(f, category, symb);
+            string txt = LabelLayerHelper.GetLabelText(f, category, symb);
             if (txt == null) return;
             Func<SizeF> labelSize = () => g.MeasureString(txt, _caches.GetFont(symb));
 
@@ -669,195 +669,76 @@ namespace DotSpatial.Controls
         /// <param name="feature">Feature to draw</param>
         private static void DrawLabel(Graphics g, string labelText, RectangleF labelBounds, ILabelSymbolizer symb, IFeature feature)
         {
-            //Sets up the brushes and such for the labeling
-            Font textFont = _caches.GetFont(symb);
-            var format = new StringFormat { Alignment = symb.Alignment, };
+          //Sets up the brushes and such for the labeling
+          Font textFont = _caches.GetFont(symb);
+          var format = new StringFormat { Alignment = symb.Alignment, };
 
-            //Text graphics path
-            var gp = new GraphicsPath();
-            gp.AddString(labelText, textFont.FontFamily, (int)textFont.Style, textFont.SizeInPoints * 96F / 72F, labelBounds, format);
+          //Text graphics path
+          var gp = new GraphicsPath();
+          gp.AddString(labelText, textFont.FontFamily, (int)textFont.Style, textFont.SizeInPoints * 96F / 72F, labelBounds, format);
 
-            // Rotate text
-            var angleToRotate = GetAngleToRotate(symb, feature);
-            RotateAt(g, labelBounds.X, labelBounds.Y, angleToRotate);
+          // Rotate text
+          var angleToRotate = LabelLayerHelper.GetAngleToRotate(symb, feature);
+          LabelLayerHelper.RotateAt(g, labelBounds.X, labelBounds.Y, angleToRotate);
 
-            // Draws the text outline
-            if (symb.BackColorEnabled && symb.BackColor != Color.Transparent)
+          // Draws the text outline
+          if (symb.BackColorEnabled && symb.BackColor != Color.Transparent)
+          {
+            var backBrush = _caches.GetSolidBrush(symb.BackColor);
+            if (symb.FontColor == Color.Transparent)
             {
-                var backBrush = _caches.GetSolidBrush(symb.BackColor);
-                if (symb.FontColor == Color.Transparent)
-                {
-                    using (var backgroundGP = new GraphicsPath())
-                    {
-                        backgroundGP.AddRectangle(labelBounds);
-                        backgroundGP.FillMode = FillMode.Alternate;
-                        backgroundGP.AddPath(gp, true);
-                        g.FillPath(backBrush, backgroundGP);
-                    }
-                }
-                else
-                {
-                    g.FillRectangle(backBrush, labelBounds);
-                }
+              using (var backgroundGP = new GraphicsPath())
+              {
+                backgroundGP.AddRectangle(labelBounds);
+                backgroundGP.FillMode = FillMode.Alternate;
+                backgroundGP.AddPath(gp, true);
+                g.FillPath(backBrush, backgroundGP);
+              }
             }
-
-            // Draws the border if its enabled
-            if (symb.BorderVisible && symb.BorderColor != Color.Transparent)
+            else
             {
-                var borderPen = _caches.GetPen(symb.BorderColor);
-                g.DrawRectangle(borderPen, labelBounds.X, labelBounds.Y, labelBounds.Width, labelBounds.Height);
+              g.FillRectangle(backBrush, labelBounds);
             }
+          }
 
-            // Draws the drop shadow
-            if (symb.DropShadowEnabled && symb.DropShadowColor != Color.Transparent)
-            {
-                var shadowBrush = _caches.GetSolidBrush(symb.DropShadowColor);
-                var gpTrans = new Matrix();
-                gpTrans.Translate(symb.DropShadowPixelOffset.X, symb.DropShadowPixelOffset.Y);
-                gp.Transform(gpTrans);
-                g.FillPath(shadowBrush, gp);
-                gpTrans = new Matrix();
-                gpTrans.Translate(-symb.DropShadowPixelOffset.X, -symb.DropShadowPixelOffset.Y);
-                gp.Transform(gpTrans);
-                gpTrans.Dispose();
-            }
+          // Draws the border if its enabled
+          if (symb.BorderVisible && symb.BorderColor != Color.Transparent)
+          {
+            var borderPen = _caches.GetPen(symb.BorderColor);
+            g.DrawRectangle(borderPen, labelBounds.X, labelBounds.Y, labelBounds.Width, labelBounds.Height);
+          }
 
-            // Draws the text halo
-            if (symb.HaloEnabled && symb.HaloColor != Color.Transparent)
-            {
-                using(var haloPen = new Pen(symb.HaloColor) {Width = 2, Alignment = PenAlignment.Outset})
-                    g.DrawPath(haloPen, gp);
-            }
+          // Draws the drop shadow
+          if (symb.DropShadowEnabled && symb.DropShadowColor != Color.Transparent)
+          {
+            var shadowBrush = _caches.GetSolidBrush(symb.DropShadowColor);
+            var gpTrans = new Matrix();
+            gpTrans.Translate(symb.DropShadowPixelOffset.X, symb.DropShadowPixelOffset.Y);
+            gp.Transform(gpTrans);
+            g.FillPath(shadowBrush, gp);
+            gpTrans = new Matrix();
+            gpTrans.Translate(-symb.DropShadowPixelOffset.X, -symb.DropShadowPixelOffset.Y);
+            gp.Transform(gpTrans);
+            gpTrans.Dispose();
+          }
 
-            // Draws the text if its not transparent
-            if (symb.FontColor != Color.Transparent)
-            {
-                var foreBrush = _caches.GetSolidBrush(symb.FontColor);
-                g.FillPath(foreBrush, gp);
-            }
-            gp.Dispose();
+          // Draws the text halo
+          if (symb.HaloEnabled && symb.HaloColor != Color.Transparent)
+          {
+            using (var haloPen = new Pen(symb.HaloColor) { Width = 2, Alignment = PenAlignment.Outset })
+              g.DrawPath(haloPen, gp);
+          }
+
+          // Draws the text if its not transparent
+          if (symb.FontColor != Color.Transparent)
+          {
+            var foreBrush = _caches.GetSolidBrush(symb.FontColor);
+            g.FillPath(foreBrush, gp);
+          }
+          gp.Dispose();
         }
 
-        private static float GetAngleToRotate(ILabelSymbolizer symb, IFeature feature)
-        {
-            if (symb.UseAngle)
-            {
-                try
-                {
-                    return Convert.ToSingle(symb.Angle);
-                }
-                catch (Exception)
-                {
-                    return 0;
-                }
-            }
-
-            if (symb.UseLabelAngleField)
-            {
-                var angleField = symb.LabelAngleField;
-                if (String.IsNullOrEmpty(angleField))
-                    return 0;
-
-                try
-                {
-                    return Convert.ToSingle(feature.DataRow[angleField]);
-                }
-                catch (Exception)
-                {
-                    return 0;
-                }
-            }
-
-            return 0;
-        }
-
-        private static void RotateAt(Graphics gr, float cx, float cy, float angle)
-        {
-            gr.ResetTransform();
-            gr.TranslateTransform(-cx, -cy, MatrixOrder.Append);
-            gr.RotateTransform(angle, MatrixOrder.Append);
-            gr.TranslateTransform(cx, cy, MatrixOrder.Append);
-        }
-
-        private static string GetLabelText(IFeature feature, ILabelCategory category, ILabelSymbolizer symb)
-        {
-          
-            var useFloatingFormat = !string.IsNullOrWhiteSpace(symb.FloatingFormat);
-            var result = category.Expression;
-            if (feature != null && ContainsExpression(result))
-            {
-                foreach (DataColumn dc in feature.DataRow.Table.Columns)
-                {
-                    var curColumnReplacement = "[" + dc.ColumnName + "]";
-
-                    // Check that this column used in expression
-                    if (!result.Contains(curColumnReplacement)) 
-                        continue; 
-
-                    var currValue = feature.DataRow[dc.ColumnName];
-                    if (useFloatingFormat &&
-                        (dc.DataType == typeof (double) ||
-                        dc.DataType == typeof (float)))
-                    {
-                        try
-                        {
-                            var dv = Convert.ToDouble(currValue);
-                            currValue = dv.ToString(symb.FloatingFormat);
-                        }
-                        catch (Exception)
-                        {
-                            currValue = SafeToString(currValue);
-                        }
-                    }
-                    else
-                    {
-                        currValue = SafeToString(currValue);
-                    }
-
-                    result = result.Replace(curColumnReplacement, (string)currValue);
-                    if (!ContainsExpression(result)) 
-                        break; 
-                }
-            }
-            return result;
-        }
-
-        private static bool ContainsExpression(string inStr)
-        {
-           
-            if (String.IsNullOrEmpty(inStr)) 
-                return false;
-            const char symb1 = ']';
-            const char symb2 = '[';
-            bool s1 = false, s2 = false;
-            foreach (var t in inStr)
-            {
-                if (t == symb1)
-                {
-                    s1 = true;
-                    if (s1 && s2) return true;
-                }
-                else if (t == symb2)
-                {
-                    s2 = true;
-                    if (s1 && s2) return true;
-                }
-            }
-
-            return false;
-            
-        }
-
-        private static string SafeToString(object value)
-        {
-            if (value == null || value == DBNull.Value)
-            {
-                return string.Empty;
-            }
-            return value.ToString();
-        }
-
-        /// <summary>
+       /// <summary>
         /// Indicates that the drawing process has been finalized and swaps the back buffer
         /// to the front buffer.
         /// </summary>
@@ -868,25 +749,6 @@ namespace DotSpatial.Controls
             _stencil = _backBuffer;
             FeatureLayer.Invalidate();
         }
-
-        ///// <summary>
-        ///// This begins the process of drawing features in the given geographic regions
-        ///// to the buffer, where the transform is specified by the GeoArgs.  This also
-        ///// configures the size of the buffer and the geographic extents based on
-        ///// the input args.
-        ///// </summary>
-        //public virtual void Initialize(MapArgs args, List<IEnvelope> regions)
-        //{
-        //    BufferEnvelope = args.GeographicExtents.Copy();
-        //    BufferRectangle = args.ImageRectangle;
-        //    Buffer = new Bitmap(args.ImageRectangle.Width, args.ImageRectangle.Height);
-        //    StartDrawing(true); // set-up the back buffer, preserving what we can
-        //   // this.Clear(regions); // clear the regions to draw in
-        //    DrawRegions(args, regions); // actually do the drawing.
-        //    FinishDrawing();
-        //    List<Rectangle> clipRects = args.ProjToPixel(regions);
-        //    OnBufferChanged(clipRects);
-        //}
 
         /// <summary>
         /// Copies any current content to the back buffer so that drawing should occur on the
