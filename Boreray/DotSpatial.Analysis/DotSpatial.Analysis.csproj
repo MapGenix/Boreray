@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{56E70075-71E0-4FDA-BCA6-CF7581112354}</ProjectGuid>
+    <ProjectGuid>{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotSpatial.Compatibility</RootNamespace>
-    <AssemblyName>DotSpatial.Compatibility</AssemblyName>
+    <RootNamespace>DotSpatial.Analysis</RootNamespace>
+    <AssemblyName>DotSpatial.Analysis</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -39,22 +39,26 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\bin\Release\DotSpatial.Compatibility.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Release\DotSpatial.Analysis.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>DotSpatial.Compatibility.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>DotSpatial.Analysis.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotSpatial.Data, Version=1.7.0.0, Culture=neutral, PublicKeyToken=c29dbf30e059ca9d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotSpatial.Data.1.7\lib\net40-Client\DotSpatial.Data.dll</HintPath>
     </Reference>
-    <Reference Include="DotSpatial.Data.Forms">
+    <Reference Include="DotSpatial.Data.Forms, Version=1.7.0.0, Culture=neutral, PublicKeyToken=53ab5a198378d4c1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotSpatial.Data.Forms.1.7\lib\net40-Client\DotSpatial.Data.Forms.dll</HintPath>
-      <Private>True</Private>
+    </Reference>
+    <Reference Include="DotSpatial.Data.Rasters.GdalExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a8023d70ef7a76f8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GdalExtension.1.0.0\lib\DotSpatial.Data.Rasters.GdalExtension.dll</HintPath>
     </Reference>
     <Reference Include="DotSpatial.Extensions, Version=1.7.0.0, Culture=neutral, PublicKeyToken=4d9e49339a7d240c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,9 +80,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotSpatial.Projections.Forms.1.7\lib\net40-Client\DotSpatial.Projections.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="DotSpatial.Serialization, Version=1.7.0.0, Culture=neutral, PublicKeyToken=441f200f827611e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="DotSpatial.Serialization">
       <HintPath>..\packages\DotSpatial.Serialization.1.7\lib\net40-Client\DotSpatial.Serialization.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="DotSpatial.Symbology, Version=1.7.0.0, Culture=neutral, PublicKeyToken=6178c08da7998387, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,63 +96,46 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotSpatial.Topology.1.7\lib\net40-Client\DotSpatial.Topology.dll</HintPath>
     </Reference>
+    <Reference Include="gdalconst_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GdalExtension.1.0.0\lib\gdalconst_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdal_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GdalExtension.1.0.0\lib\gdal_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ogr_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GdalExtension.1.0.0\lib\ogr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp, Version=1.0.4704.32536, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GdalExtension.1.0.0\lib\osr_csharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppInfo.cs" />
-    <Compile Include="ClickLocation.cs" />
-    <Compile Include="CursorMode.cs" />
-    <Compile Include="HJustification.cs" />
-    <Compile Include="IAppInfo.cs" />
-    <Compile Include="IComboBoxItem.cs" />
-    <Compile Include="IdentifiedShapes.cs" />
-    <Compile Include="IDraw.cs" />
-    <Compile Include="IIdentifiedLayers.cs" />
-    <Compile Include="ILayerOld.cs" />
-    <Compile Include="ILayers.cs" />
-    <Compile Include="IMapWin.cs" />
-    <Compile Include="IMenuItem.cs" />
-    <Compile Include="IMenus.cs" />
-    <Compile Include="IPlugin.cs" />
-    <Compile Include="IPlugins.cs" />
-    <Compile Include="IPreviewMap.cs" />
-    <Compile Include="IProject.cs" />
-    <Compile Include="IReports.cs" />
-    <Compile Include="ISelectedShape.cs" />
-    <Compile Include="ISelectInfo.cs" />
-    <Compile Include="IStatusBar.cs" />
-    <Compile Include="IStatusBarItem.cs" />
-    <Compile Include="IToolbar.cs" />
-    <Compile Include="IToolbarButton.cs" />
-    <Compile Include="IUIPanel.cs" />
-    <Compile Include="IUserInteraction.cs" />
-    <Compile Include="IViewOld.cs" />
-    <Compile Include="LayerType.cs" />
-    <Compile Include="LegacyPluginManager.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="LegacyPluginManager.designer.cs">
-      <DependentUpon>LegacyPluginManager.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MapCursorMode.cs" />
-    <Compile Include="MapWin.cs" />
-    <Compile Include="MenuItem.cs" />
-    <Compile Include="Menus.cs" />
-    <Compile Include="PointType.cs" />
-    <Compile Include="PreviewExtentMode.cs" />
+    <Compile Include="Border.cs" />
+    <Compile Include="Buffer.cs" />
+    <Compile Include="Overlay.cs" />
+    <Compile Include="RandomGeometry.cs" />
+    <Compile Include="ClipRaster.cs" />
+    <Compile Include="FileLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceType.cs" />
-    <Compile Include="SelectMode.cs" />
-    <Compile Include="SpatialDockStyle.cs" />
-    <Compile Include="Stipple.cs" />
-    <Compile Include="UnitsOfMeasure.cs" />
-    <Compile Include="UserInteraction.cs" />
+    <Compile Include="RasterBin.cs" />
+    <Compile Include="ResampleCells.cs" />
+    <Compile Include="Slope.cs" />
+    <Compile Include="VectorToRaster.cs" />
+    <Compile Include="Voronoi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DotSpatial.Compatibility.snk" />
+    <None Include="app.config" />
+    <None Include="DotSpatial.Analysis.snk" />
     <None Include="package.nuspec">
       <SubType>Designer</SubType>
     </None>

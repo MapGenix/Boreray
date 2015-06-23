@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotSpatial.Compatibility", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotSpatial.Tests.Common", "DotSpatial.Tests.Common\DotSpatial.Tests.Common.csproj", "{95114A54-769F-4A90-A346-C2CF85523AAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotSpatial.Analysis", "DotSpatial.Analysis\DotSpatial.Analysis.csproj", "{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,12 @@ Global
 		{95114A54-769F-4A90-A346-C2CF85523AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95114A54-769F-4A90-A346-C2CF85523AAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95114A54-769F-4A90-A346-C2CF85523AAD}.Release|x86.ActiveCfg = Release|Any CPU
+		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
