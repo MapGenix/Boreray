@@ -26,113 +26,112 @@ using System.Windows.Forms;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// A Brian Marchioni original toolstrip... preloaded with content.
-    /// </summary>
-    [ToolboxItem(true)]
-    public partial class LayoutInsertToolStrip : ToolStrip
-    {
-        #region Fields
-        
-        private LayoutControl _layoutControl;
+	/// <summary>
+	/// A Brian Marchioni original toolstrip... preloaded with content.
+	/// </summary>
+	[ToolboxItem(true)]
+	public partial class LayoutInsertToolStrip : ToolStrip
+	{
+		#region Fields
 
-        #endregion
+		private LayoutControl _layoutControl;
 
-        #region Constructor
+		#endregion Fields
 
-        /// <summary>
-        /// Creates an instance of the toolstrip
-        /// </summary>
-        public LayoutInsertToolStrip()
-        {
-            InitializeComponent();
-        }
+		#region Constructor
 
-        #endregion
+		/// <summary>
+		/// Creates an instance of the toolstrip
+		/// </summary>
+		public LayoutInsertToolStrip()
+		{
+			InitializeComponent();
+		}
 
-        #region Properties
+		#endregion Constructor
 
-        /// <summary>
-        /// The layout control associated with this toolstrip
-        /// </summary>
-        [Browsable(false)]
-        public LayoutControl LayoutControl
-        {
-            get { return _layoutControl; }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-                _layoutControl = value;
-            }
-        }
+		#region Properties
 
-        #endregion
+		/// <summary>
+		/// The layout control associated with this toolstrip
+		/// </summary>
+		[Browsable(false)]
+		public LayoutControl LayoutControl
+		{
+			get { return _layoutControl; }
+			set
+			{
+				if (value == null)
+				{
+					throw new ArgumentOutOfRangeException("value");
+				}
+				_layoutControl = value;
+			}
+		}
 
-        #region Methods
+		#endregion Properties
 
-        private void _btnLegend_Click(object sender, EventArgs e)
-        {
-            _layoutControl.AddElementWithMouse(_layoutControl.CreateLegendElement());
-        }
+		#region Methods
 
-        //Adds a scale bar element to the layout and if there is already a map on the form we link it to the first one
-        private void _btnScaleBar_Click(object sender, EventArgs e)
-        {
-            _layoutControl.AddElementWithMouse(_layoutControl.CreateScaleBarElement());
-        }
+		private void _btnLegend_Click(object sender, EventArgs e)
+		{
+			_layoutControl.AddElementWithMouse(_layoutControl.CreateLegendElement());
+		}
 
-        //Fires the print method on the layoutcontrol
-        private void _btnMap_Click(object sender, EventArgs e)
-        {
-            if (_layoutControl.MapControl != null)
-            {
-                _layoutControl.AddElementWithMouse(_layoutControl.CreateMapElement());
-            }
-            else
-            {
-                MessageBox.Show(Parent, "Unable to add map without associated MapControl.", "Missing MapControl",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+		//Adds a scale bar element to the layout and if there is already a map on the form we link it to the first one
+		private void _btnScaleBar_Click(object sender, EventArgs e)
+		{
+			_layoutControl.AddElementWithMouse(_layoutControl.CreateScaleBarElement());
+		}
 
-            }
-        }
+		//Fires the print method on the layoutcontrol
+		private void _btnMap_Click(object sender, EventArgs e)
+		{
+			if (_layoutControl.MapControl != null)
+			{
+				_layoutControl.AddElementWithMouse(_layoutControl.CreateMapElement());
+			}
+			else
+			{
+				MessageBox.Show(Parent, "Unable to add map without associated MapControl.", "Missing MapControl",
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+		}
 
-        //Fires the saveas method on the layoutcontrol
-        private void _btnText_Click(object sender, EventArgs e)
-        {
-            _layoutControl.AddElementWithMouse(new LayoutText());
-        }
+		//Fires the saveas method on the layoutcontrol
+		private void _btnText_Click(object sender, EventArgs e)
+		{
+			_layoutControl.AddElementWithMouse(new LayoutText());
+		}
 
-        //Fires the save method on the layoutcontrol
-        private void _btnRectangle_Click(object sender, EventArgs e)
-        {
-            _layoutControl.AddElementWithMouse(new LayoutRectangle());
-        }
+		//Fires the save method on the layoutcontrol
+		private void _btnRectangle_Click(object sender, EventArgs e)
+		{
+			_layoutControl.AddElementWithMouse(new LayoutRectangle());
+		}
 
-        //Fires the new method on the layoutcontrol
-        private void _btnNorthArrow_Click(object sender, EventArgs e)
-        {
-            _layoutControl.AddElementWithMouse(new LayoutNorthArrow());
-        }
+		//Fires the new method on the layoutcontrol
+		private void _btnNorthArrow_Click(object sender, EventArgs e)
+		{
+			_layoutControl.AddElementWithMouse(new LayoutNorthArrow());
+		}
 
-        //Fires the open method on the layoutcontrol
-        private void _btnBitmap_Click(object sender, EventArgs e)
-        {
-            var ofd = new OpenFileDialog
-            {
-                Filter = "Images (*.png, *.jpg, *.bmp, *.gif, *.tif)|*.png;*.jpg;*.bmp;*.gif;*.tif",
-                FilterIndex = 1,
-                CheckFileExists = true
-            };
-            if (ofd.ShowDialog(Parent) == DialogResult.OK)
-            {
-                var newBitmap = new LayoutBitmap {Size = new SizeF(100, 100), Filename = ofd.FileName};
-                _layoutControl.AddElementWithMouse(newBitmap);
-            }
-        }
+		//Fires the open method on the layoutcontrol
+		private void _btnBitmap_Click(object sender, EventArgs e)
+		{
+			var ofd = new OpenFileDialog
+			{
+				Filter = "Images (*.png, *.jpg, *.bmp, *.gif, *.tif)|*.png;*.jpg;*.bmp;*.gif;*.tif",
+				FilterIndex = 1,
+				CheckFileExists = true
+			};
+			if (ofd.ShowDialog(Parent) == DialogResult.OK)
+			{
+				var newBitmap = new LayoutBitmap { Size = new SizeF(100, 100), Filename = ofd.FileName };
+				_layoutControl.AddElementWithMouse(newBitmap);
+			}
+		}
 
-        #endregion
-    }
+		#endregion Methods
+	}
 }

@@ -347,7 +347,6 @@ namespace DotSpatial.Controls
 
 		#region Private  Methods
 
-		
 		private void DrawFeatures(MapArgs e, IEnumerable<int> indices)
 		{
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
@@ -361,7 +360,7 @@ namespace DotSpatial.Controls
 
 			if (!DrawnStatesNeeded)
 			{
-				if (DrawWithoutStates(e, indices, g, featureType, minX, dx, maxY, dy, origTransform)) 
+				if (DrawWithoutStates(e, indices, g, featureType, minX, dx, maxY, dy, origTransform))
 					return;
 			}
 			else
@@ -369,7 +368,7 @@ namespace DotSpatial.Controls
 				DrawStates(e, indices, featureType, minX, dx, maxY, dy, origTransform, g);
 			}
 
-			if (e.Device == null) 
+			if (e.Device == null)
 				g.Dispose();
 			else g.Transform = origTransform;
 		}
@@ -394,29 +393,28 @@ namespace DotSpatial.Controls
 			double scaleSize = 1;
 			if (category.Symbolizer.ScaleMode == ScaleMode.Geographic)
 			{
-				scaleSize = e.ImageRectangle.Width/e.GeographicExtents.Width;
+				scaleSize = e.ImageRectangle.Width / e.GeographicExtents.Width;
 			}
 			Size2D size = category.Symbolizer.GetSize();
-			if (size.Width*scaleSize < 1 || size.Height*scaleSize < 1) return;
+			if (size.Width * scaleSize < 1 || size.Height * scaleSize < 1) return;
 
-			Bitmap normalSymbol = new Bitmap((int) (size.Width*scaleSize) + 1, (int) (size.Height*scaleSize) + 1);
+			Bitmap normalSymbol = new Bitmap((int)(size.Width * scaleSize) + 1, (int)(size.Height * scaleSize) + 1);
 			Graphics bg = Graphics.FromImage(normalSymbol);
 			bg.SmoothingMode = category.Symbolizer.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
 			Matrix trans = bg.Transform;
 
-			
-			trans.Translate(((float) (size.Width*scaleSize)/2 - 1), (float) (size.Height*scaleSize)/2 - 1);
+			trans.Translate(((float)(size.Width * scaleSize) / 2 - 1), (float)(size.Height * scaleSize) / 2 - 1);
 			bg.Transform = trans;
 			category.Symbolizer.Draw(bg, 1);
 
 			Size2D selSize = category.SelectionSymbolizer.GetSize();
-			if (selSize.Width*scaleSize < 1 || selSize.Height*scaleSize < 1) return;
+			if (selSize.Width * scaleSize < 1 || selSize.Height * scaleSize < 1) return;
 
-			Bitmap selectedSymbol = new Bitmap((int) (selSize.Width*scaleSize + 1), (int) (selSize.Height*scaleSize + 1));
+			Bitmap selectedSymbol = new Bitmap((int)(selSize.Width * scaleSize + 1), (int)(selSize.Height * scaleSize + 1));
 			Graphics sg = Graphics.FromImage(selectedSymbol);
 			sg.SmoothingMode = category.SelectionSymbolizer.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
 			Matrix trans2 = sg.Transform;
-			trans2.Translate((float) selSize.Width/2, (float) selSize.Height/2);
+			trans2.Translate((float)selSize.Width / 2, (float)selSize.Height / 2);
 			sg.Transform = trans2;
 			category.SelectionSymbolizer.Draw(sg, 1);
 
@@ -462,14 +460,14 @@ namespace DotSpatial.Controls
 			{
 				var pt = new Point
 				{
-					X = Convert.ToInt32((vertices[i*2] - minX)*dx),
-					Y = Convert.ToInt32((maxY - vertices[i*2 + 1])*dy)
+					X = Convert.ToInt32((vertices[i * 2] - minX) * dx),
+					Y = Convert.ToInt32((maxY - vertices[i * 2 + 1]) * dy)
 				};
 
 				Matrix shift = origTransform.Clone();
 				shift.Translate(pt.X, pt.Y);
 				g.Transform = shift;
-				g.DrawImageUnscaled(bmp, -bmp.Width/2, -bmp.Height/2);
+				g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 			}
 		}
 
@@ -478,15 +476,15 @@ namespace DotSpatial.Controls
 		{
 			var pt = new Point
 			{
-				X = Convert.ToInt32((vertices[index*2] - minX)*dx),
-				Y = Convert.ToInt32((maxY - vertices[index*2 + 1])*dy)
+				X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
+				Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
 			};
 
 			Matrix shift = origTransform.Clone();
 			shift.Translate(pt.X, pt.Y);
 			g.Transform = shift;
 
-			g.DrawImageUnscaled(bmp, -bmp.Width/2, -bmp.Height/2);
+			g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 		}
 
 		private bool DrawWithoutStates(MapArgs e, IEnumerable<int> indices, Graphics g, FeatureType featureType, double minX,
@@ -529,13 +527,13 @@ namespace DotSpatial.Controls
 			{
 				var pt = new Point
 				{
-					X = Convert.ToInt32((vertices[i*2] - minX)*dx),
-					Y = Convert.ToInt32((maxY - vertices[i*2 + 1])*dy)
+					X = Convert.ToInt32((vertices[i * 2] - minX) * dx),
+					Y = Convert.ToInt32((maxY - vertices[i * 2 + 1]) * dy)
 				};
 				double scaleSize = 1;
 				if (ps.ScaleMode == ScaleMode.Geographic)
 				{
-					scaleSize = e.ImageRectangle.Width/e.GeographicExtents.Width;
+					scaleSize = e.ImageRectangle.Width / e.GeographicExtents.Width;
 				}
 				Matrix shift = origTransform.Clone();
 				shift.Translate(pt.X, pt.Y);
@@ -549,13 +547,13 @@ namespace DotSpatial.Controls
 		{
 			var pt = new Point
 			{
-				X = Convert.ToInt32((vertices[index*2] - minX)*dx),
-				Y = Convert.ToInt32((maxY - vertices[index*2 + 1])*dy)
+				X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
+				Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
 			};
 			double scaleSize = 1;
 			if (ps.ScaleMode == ScaleMode.Geographic)
 			{
-				scaleSize = e.ImageRectangle.Width/e.GeographicExtents.Width;
+				scaleSize = e.ImageRectangle.Width / e.GeographicExtents.Width;
 			}
 			Matrix shift = origTransform.Clone();
 			shift.Translate(pt.X, pt.Y);
@@ -625,8 +623,8 @@ namespace DotSpatial.Controls
 		{
 			Point pt = new Point
 			{
-				X = Convert.ToInt32((c.X - minX)*dx),
-				Y = Convert.ToInt32((maxY - c.Y)*dy)
+				X = Convert.ToInt32((c.X - minX) * dx),
+				Y = Convert.ToInt32((maxY - c.Y) * dy)
 			};
 
 			double scaleSize = LineLayerHelper.DefineScale(e, ps);

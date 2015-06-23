@@ -18,105 +18,105 @@
 //
 // ********************************************************************************************************
 
+using DotSpatial.Symbology;
 using System;
 using System.Drawing;
-using DotSpatial.Symbology;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// GeoDrawTextArgs
-    /// </summary>
-    [Obsolete("Do not use it. This class is not used in DotSpatial anymore.")] // Marked in 1.7
-    public class MapDrawTextArgs
-    {
-        #region Private Variables
+	/// <summary>
+	/// GeoDrawTextArgs
+	/// </summary>
+	[Obsolete("Do not use it. This class is not used in DotSpatial anymore.")] // Marked in 1.7
+	public class MapDrawTextArgs
+	{
+		#region Private Variables
 
-        private Brush _backBrush;
-        private Pen _borderPen;
-        private MapDrawArgs _drawArgs;
-        private Brush _fontBrush;
-        private ILabelSymbolizer _symbolizer;
+		private Brush _backBrush;
+		private Pen _borderPen;
+		private MapDrawArgs _drawArgs;
+		private Brush _fontBrush;
+		private ILabelSymbolizer _symbolizer;
 
-        #endregion
+		#endregion Private Variables
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates a new instance of GeoDrawTextArgs
-        /// </summary>
-        public MapDrawTextArgs(MapDrawArgs args, ILabelSymbolizer symbolizer)
-        {
-            _symbolizer = symbolizer;
-            _drawArgs = args;
-            _fontBrush = new SolidBrush(symbolizer.FontColor);
-            _backBrush = new SolidBrush(symbolizer.BackColor);
-            _borderPen = new Pen(symbolizer.BorderColor);
-        }
+		/// <summary>
+		/// Creates a new instance of GeoDrawTextArgs
+		/// </summary>
+		public MapDrawTextArgs(MapDrawArgs args, ILabelSymbolizer symbolizer)
+		{
+			_symbolizer = symbolizer;
+			_drawArgs = args;
+			_fontBrush = new SolidBrush(symbolizer.FontColor);
+			_backBrush = new SolidBrush(symbolizer.BackColor);
+			_borderPen = new Pen(symbolizer.BorderColor);
+		}
 
-        #endregion
+		#endregion Constructors
 
-        #region Methods
+		#region Methods
 
-        /// <summary>
-        /// Disposes the font brush, border pen and background brush
-        /// </summary>
-        public void Dispose()
-        {
-            _fontBrush.Dispose();
-            _borderPen.Dispose();
-            _backBrush.Dispose();
-        }
+		/// <summary>
+		/// Disposes the font brush, border pen and background brush
+		/// </summary>
+		public void Dispose()
+		{
+			_fontBrush.Dispose();
+			_borderPen.Dispose();
+			_backBrush.Dispose();
+		}
 
-        #endregion
+		#endregion Methods
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Gets the TextSymbolizer for this
-        /// </summary>
-        public ILabelSymbolizer Symbolizer
-        {
-            get { return _symbolizer; }
-            protected set { _symbolizer = value; }
-        }
+		/// <summary>
+		/// Gets the TextSymbolizer for this
+		/// </summary>
+		public ILabelSymbolizer Symbolizer
+		{
+			get { return _symbolizer; }
+			protected set { _symbolizer = value; }
+		}
 
-        /// <summary>
-        /// Gets the GeoDrawArgs
-        /// </summary>
-        public MapDrawArgs DrawArgs
-        {
-            get { return _drawArgs; }
-            protected set { _drawArgs = value; }
-        }
+		/// <summary>
+		/// Gets the GeoDrawArgs
+		/// </summary>
+		public MapDrawArgs DrawArgs
+		{
+			get { return _drawArgs; }
+			protected set { _drawArgs = value; }
+		}
 
-        /// <summary>
-        /// Gets the brush for drawing the background.
-        /// </summary>
-        public Brush BackBrush
-        {
-            get { return _backBrush; }
-            protected set { _backBrush = value; }
-        }
+		/// <summary>
+		/// Gets the brush for drawing the background.
+		/// </summary>
+		public Brush BackBrush
+		{
+			get { return _backBrush; }
+			protected set { _backBrush = value; }
+		}
 
-        /// <summary>
-        /// Gets the border pen
-        /// </summary>
-        public Pen BorderPen
-        {
-            get { return _borderPen; }
-            set { _borderPen = value; }
-        }
+		/// <summary>
+		/// Gets the border pen
+		/// </summary>
+		public Pen BorderPen
+		{
+			get { return _borderPen; }
+			set { _borderPen = value; }
+		}
 
-        /// <summary>
-        /// Gets the brush used for drawing fonts.
-        /// </summary>
-        public Brush FontBrush
-        {
-            get { return _fontBrush; }
-            set { _fontBrush = value; }
-        }
+		/// <summary>
+		/// Gets the brush used for drawing fonts.
+		/// </summary>
+		public Brush FontBrush
+		{
+			get { return _fontBrush; }
+			set { _fontBrush = value; }
+		}
 
-        #endregion
-    }
+		#endregion Properties
+	}
 }

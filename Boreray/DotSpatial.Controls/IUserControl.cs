@@ -25,48 +25,48 @@ using System.Windows.Forms;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// Provides an empty control that can be used to create other controls.
-    /// </summary>
-    [Obsolete("Do not use it. This interface is not used in DotSpatial anymore.")] // Marked in 1.7
-    public interface IUserControl : IContainerControl
-    {
-        #region Properties
+	/// <summary>
+	/// Provides an empty control that can be used to create other controls.
+	/// </summary>
+	[Obsolete("Do not use it. This interface is not used in DotSpatial anymore.")] // Marked in 1.7
+	public interface IUserControl : IContainerControl
+	{
+		#region Properties
 
-        /// <summary>
-        /// Gets or sets how the control will resize itself.
-        /// </summary>
-        /// <returns>
-        /// A value from the AutoSizeMode enumeration. The default is AutoSizeMode.GrowOnly.
-        /// </returns>
-        AutoSizeMode AutoSizeMode { get; set; }
+		/// <summary>
+		/// Gets or sets how the control will resize itself.
+		/// </summary>
+		/// <returns>
+		/// A value from the AutoSizeMode enumeration. The default is AutoSizeMode.GrowOnly.
+		/// </returns>
+		AutoSizeMode AutoSizeMode { get; set; }
 
-        /// <summary>
-        /// Gets or sets the border style of the tree view control.
-        /// </summary>
-        /// <returns>
-        /// One of the BorderStyle values. The default is BorderStyle.Fixed3D.
-        /// </returns>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// InvalidEnumArgumentException: The assigned value is not one of the BorderStyle values.
-        /// </exception>
-        BorderStyle BorderStyle { get; set; }
+		/// <summary>
+		/// Gets or sets the border style of the tree view control.
+		/// </summary>
+		/// <returns>
+		/// One of the BorderStyle values. The default is BorderStyle.Fixed3D.
+		/// </returns>
+		/// <exception cref="InvalidEnumArgumentException">
+		/// InvalidEnumArgumentException: The assigned value is not one of the BorderStyle values.
+		/// </exception>
+		BorderStyle BorderStyle { get; set; }
 
-        #endregion
+		#endregion Properties
 
-        /// <summary>
-        /// Occurs when the AutoSize changes
-        /// </summary>
-        event EventHandler AutoSizeChanged;
+		/// <summary>
+		/// Occurs when the AutoSize changes
+		/// </summary>
+		event EventHandler AutoSizeChanged;
 
-        /// <summary>
-        /// Occurs when the UserControl.AutoValidate property changes.
-        /// </summary>
-        event EventHandler AutoValidateChanged;
+		/// <summary>
+		/// Occurs when the UserControl.AutoValidate property changes.
+		/// </summary>
+		event EventHandler AutoValidateChanged;
 
-        /// <summary>
-        /// Occurs before the control becomes visible for the first time.
-        /// </summary>
-        event EventHandler Load;
-    }
+		/// <summary>
+		/// Occurs before the control becomes visible for the first time.
+		/// </summary>
+		event EventHandler Load;
+	}
 }

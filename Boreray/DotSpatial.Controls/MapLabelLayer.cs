@@ -126,8 +126,6 @@ namespace DotSpatial.Controls
 			}
 		}
 
-		
-
 		/// <summary>
 		/// Call StartDrawing before using this.
 		/// </summary>
@@ -221,7 +219,7 @@ namespace DotSpatial.Controls
 		private void DrawFeatures(MapArgs e, IEnumerable<int> features)
 		{
 			// Check that exists at least one category with Expression
-			if (Symbology.Categories.All(_ => string.IsNullOrEmpty(_.Expression))) 
+			if (Symbology.Categories.All(_ => string.IsNullOrEmpty(_.Expression)))
 				return;
 
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
@@ -233,16 +231,15 @@ namespace DotSpatial.Controls
 				CreateIndexedLabels();
 			}
 			FastLabelDrawnState[] drawStates = FastDrawnStates;
-			if (drawStates == null) 
+			if (drawStates == null)
 				return;
-			
+
 			g.TextRenderingHint = TextRenderingHint.AntiAlias;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
 			Action<int, IFeature> drawPolygon = (fid, feature) => DrawPolygonFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
 			Action<int, IFeature> drawLine = (fid, feature) => DrawLineFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
 			Action<int, IFeature> drawPoint = (fid, feature) => DrawPointFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
-					
 
 			Action<int, IFeature> drawFeature;
 			switch (FeatureSet.FeatureType)
@@ -266,7 +263,7 @@ namespace DotSpatial.Controls
 			foreach (var category in Symbology.Categories)
 			{
 				List<int> catFeatures = FilterCategoryFeatures(features, drawStates, category);
-				
+
 				Prioritize(category, catFeatures);
 
 				foreach (var fid in catFeatures)
@@ -334,7 +331,7 @@ namespace DotSpatial.Controls
 				CreateLabels();
 			}
 			Dictionary<IFeature, LabelDrawState> drawStates = DrawnStates;
-			if (drawStates == null) 
+			if (drawStates == null)
 				return;
 			g.TextRenderingHint = TextRenderingHint.AntiAlias;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -342,13 +339,12 @@ namespace DotSpatial.Controls
 			Action<IFeature> drawPolygon = f => DrawPolygonFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
 			Action<IFeature> drawLine = f => DrawLineFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
 			Action<IFeature> drawPoint = f => DrawPointFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
-									
 
 			Action<IFeature> drawFeature;
 			switch (features.First().FeatureType)
 			{
 				case FeatureType.Polygon:
-					drawFeature =drawPolygon;
+					drawFeature = drawPolygon;
 					break;
 
 				case FeatureType.Line:
@@ -379,8 +375,6 @@ namespace DotSpatial.Controls
 
 			if (e.Device == null) g.Dispose();
 		}
-
-		
 
 		/// <summary>
 		/// Draws a label on a polygon with various different methods
@@ -508,8 +502,6 @@ namespace DotSpatial.Controls
 				CollisionDraw(txt, g, symb, f, e, labelBounds, existingLabels);
 			}
 		}
-
-		
 
 		/// <summary>
 		/// Draws a label on a line with various different methods
@@ -795,7 +787,5 @@ namespace DotSpatial.Controls
 			}
 			return drawIndices;
 		}
-
-		
 	}
 }

@@ -21,171 +21,166 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using DotSpatial.Data;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// A MapFunction that can zoom the map using the scroll wheel.
-    /// </summary>
-    public class MapFunctionZoom : MapFunction
-    {
-        #region Private Variables
+	/// <summary>
+	/// A MapFunction that can zoom the map using the scroll wheel.
+	/// </summary>
+	public class MapFunctionZoom : MapFunction
+	{
+		#region Private Variables
 
-        private Rectangle _client;
-        private int _direction;
-        private IMapFrame _mapFrame;
-        private double _sensitivity;
-        private int _timerInterval;
-        private Timer _zoomTimer;
+		private Rectangle _client;
+		private int _direction;
+		private IMapFrame _mapFrame;
+		private double _sensitivity;
+		private int _timerInterval;
+		private Timer _zoomTimer;
 
-        #endregion
+		#endregion Private Variables
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the MapFunctionZoom class.
-        /// </summary>
-        public MapFunctionZoom(IMap inMap)
-            : base(inMap)
-        {
-            Configure();
-            BusySet = false;
-        }
+		/// <summary>
+		/// Initializes a new instance of the MapFunctionZoom class.
+		/// </summary>
+		public MapFunctionZoom(IMap inMap)
+			: base(inMap)
+		{
+			Configure();
+			BusySet = false;
+		}
 
-        private void Configure()
-        {
-            YieldStyle = YieldStyles.Scroll;
-            _timerInterval = 100;
-            _zoomTimer = new Timer { Interval = _timerInterval };
-            _zoomTimer.Tick += ZoomTimerTick;
-            _client = Rectangle.Empty;
-            Sensitivity = .30;
-            ForwardZoomsIn = true;
-            Name = "ScrollZoom";
-        }
+		private void Configure()
+		{
+			YieldStyle = YieldStyles.Scroll;
+			_timerInterval = 100;
+			_zoomTimer = new Timer { Interval = _timerInterval };
+			_zoomTimer.Tick += ZoomTimerTick;
+			_client = Rectangle.Empty;
+			Sensitivity = .30;
+			ForwardZoomsIn = true;
+			Name = "ScrollZoom";
+		}
 
-        private void ZoomTimerTick(object sender, EventArgs e)
-        {
-            _zoomTimer.Stop();
-            if (_mapFrame == null)
-            {
-                return;
-            }
-            _client = Rectangle.Empty;
-            _mapFrame.ResetExtents();
-            Map.IsBusy = false;
-            BusySet = false;
-        }
+		private void ZoomTimerTick(object sender, EventArgs e)
+		{
+			_zoomTimer.Stop();
+			if (_mapFrame == null)
+			{
+				return;
+			}
+			_client = Rectangle.Empty;
+			_mapFrame.ResetExtents();
+			Map.IsBusy = false;
+			BusySet = false;
+		}
 
-        #endregion
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Gets or sets the wheel zoom sensitivity.  Increasing makes it more sensitive.  Maximum is 0.5, Minimum is 0.01
-        /// </summary>
-        public double Sensitivity
-        {
-            get { return 1.0 / _sensitivity; }
-            set
-            {
-                if (value > 0.5)
-                    value = 0.5;
-                else if (value < 0.01)
-                    value = 0.01;
-                _sensitivity = 1.0 / value;
-            }
-        }
+		/// <summary>
+		/// Gets or sets the wheel zoom sensitivity.  Increasing makes it more sensitive.  Maximum is 0.5, Minimum is 0.01
+		/// </summary>
+		public double Sensitivity
+		{
+			get { return 1.0 / _sensitivity; }
+			set
+			{
+				if (value > 0.5)
+					value = 0.5;
+				else if (value < 0.01)
+					value = 0.01;
+				_sensitivity = 1.0 / value;
+			}
+		}
 
-        /// <summary>
-        /// Controls the sense (direction) of zoom (in or out) as you roll the mouse wheel
-        /// </summary>
-        public bool ForwardZoomsIn
-        {
-            get { return _direction > 0; }
-            set { _direction = value ? 1 : -1; }
-        }
+		/// <summary>
+		/// Controls the sense (direction) of zoom (in or out) as you roll the mouse wheel
+		/// </summary>
+		public bool ForwardZoomsIn
+		{
+			get { return _direction > 0; }
+			set { _direction = value ? 1 : -1; }
+		}
 
-        /// <summary>
-        /// Gets or sets the full refresh timeout value in milliseconds
-        /// </summary>
-        public int TimerInterval
-        {
-            get { return _timerInterval; }
-            set
-            {
-                _timerInterval = value;
-                _zoomTimer.Interval = _timerInterval;
-            }
-        }
+		/// <summary>
+		/// Gets or sets the full refresh timeout value in milliseconds
+		/// </summary>
+		public int TimerInterval
+		{
+			get { return _timerInterval; }
+			set
+			{
+				_timerInterval = value;
+				_zoomTimer.Interval = _timerInterval;
+			}
+		}
 
-        #endregion
+		#endregion Properties
 
-        #region Protected Methods
+		#region Protected Methods
 
-        /// <summary>
-        /// Mouse Wheel
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnMouseWheel(GeoMouseArgs e) //Fix this
-        {
-            _zoomTimer.Stop(); // if the timer was already started, stop it.
-            if (e.Map.IsZoomedToMaxExtent && (_direction * e.Delta < 0))
-            {}
-            else
-            {
-                e.Map.IsZoomedToMaxExtent = false;
-                Rectangle r = e.Map.MapFrame.View;
+		/// <summary>
+		/// Mouse Wheel
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnMouseWheel(GeoMouseArgs e) //Fix this
+		{
+			_zoomTimer.Stop(); // if the timer was already started, stop it.
+			if (e.Map.IsZoomedToMaxExtent && (_direction * e.Delta < 0))
+			{ }
+			else
+			{
+				e.Map.IsZoomedToMaxExtent = false;
+				Rectangle r = e.Map.MapFrame.View;
 
-                // For multiple zoom steps before redrawing, we actually
-                // want the x coordinate relative to the screen, not
-                // the x coordinate relative to the previously modified view.
-                if (_client == Rectangle.Empty)
-                {
-                    _client = r;
-                }
-                int cw = _client.Width;
-                int ch = _client.Height;
+				// For multiple zoom steps before redrawing, we actually
+				// want the x coordinate relative to the screen, not
+				// the x coordinate relative to the previously modified view.
+				if (_client == Rectangle.Empty)
+				{
+					_client = r;
+				}
+				int cw = _client.Width;
+				int ch = _client.Height;
 
-                double w = r.Width;
-                double h = r.Height;
+				double w = r.Width;
+				double h = r.Height;
 
-                if (_direction * e.Delta > 0)
-                {
+				if (_direction * e.Delta > 0)
+				{
+					double inFactor = 2.0 * _sensitivity;
+					r.Inflate(Convert.ToInt32(-w / inFactor), Convert.ToInt32(-h / inFactor));
+					// try to keep the mouse cursor in the same geographic position
+					r.X += Convert.ToInt32((e.X * w / (_sensitivity * cw)) - w / inFactor);
+					r.Y += Convert.ToInt32((e.Y * h / (_sensitivity * ch)) - h / inFactor);
+				}
+				else
+				{
+					double outFactor = 0.5 * _sensitivity;
+					r.Inflate(Convert.ToInt32(w / _sensitivity), Convert.ToInt32(h / _sensitivity));
+					r.X += Convert.ToInt32(w / _sensitivity - (e.X * w / (outFactor * cw)));
+					r.Y += Convert.ToInt32(h / _sensitivity - (e.Y * h / (outFactor * ch)));
+				}
 
-                    double inFactor = 2.0 * _sensitivity;
-                    r.Inflate(Convert.ToInt32(-w / inFactor), Convert.ToInt32(-h / inFactor));
-                    // try to keep the mouse cursor in the same geographic position
-                    r.X += Convert.ToInt32((e.X * w / (_sensitivity * cw)) - w / inFactor);
-                    r.Y += Convert.ToInt32((e.Y * h / (_sensitivity * ch)) - h / inFactor);
+				e.Map.MapFrame.View = r;
+				e.Map.Invalidate();
+				_zoomTimer.Start();
+				_mapFrame = e.Map.MapFrame;
+				if (!BusySet)
+				{
+					Map.IsBusy = true;
+					BusySet = true;
+				}
+				base.OnMouseWheel(e);
+			}
+		}
 
-                }
-                else
-                {
-                    double outFactor = 0.5 * _sensitivity;
-                    r.Inflate(Convert.ToInt32(w / _sensitivity), Convert.ToInt32(h / _sensitivity));
-                    r.X += Convert.ToInt32(w / _sensitivity - (e.X * w / (outFactor * cw)));
-                    r.Y += Convert.ToInt32(h / _sensitivity - (e.Y * h / (outFactor * ch)));
-                }
+		#endregion Protected Methods
 
-                e.Map.MapFrame.View = r;
-                e.Map.Invalidate();
-                _zoomTimer.Start();
-                _mapFrame = e.Map.MapFrame;
-                if (!BusySet)
-                {
-                    Map.IsBusy = true;
-                    BusySet = true;
-                }
-                base.OnMouseWheel(e);
-
-            }
-
-        }
-
-        #endregion
-
-        public bool BusySet { get; set; }
-    }
+		public bool BusySet { get; set; }
+	}
 }

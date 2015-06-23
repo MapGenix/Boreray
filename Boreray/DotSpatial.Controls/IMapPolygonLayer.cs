@@ -22,10 +22,10 @@ using DotSpatial.Symbology;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// IGeoPolygonLayer
-    /// </summary>
-    public interface IMapPolygonLayer : IPolygonLayer, IMapFeatureLayer
-    {
-    }
+	/// <summary>
+	/// IGeoPolygonLayer
+	/// </summary>
+	public interface IMapPolygonLayer : IPolygonLayer, IMapFeatureLayer
+	{
+	}
 }

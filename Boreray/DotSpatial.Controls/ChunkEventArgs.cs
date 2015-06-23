@@ -22,45 +22,39 @@ using System;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// ChunkEventArgs
-    /// </summary>
-    [Obsolete("Do not use it. This class is not used in DotSpatial anymore.")] // Marked in 1.7
-    public class ChunkEventArgs : EventArgs
-    {
-        #region Private Variables
+	/// <summary>
+	/// ChunkEventArgs
+	/// </summary>
+	[Obsolete("Do not use it. This class is not used in DotSpatial anymore.")] // Marked in 1.7
+	public class ChunkEventArgs : EventArgs
+	{
+		#region Constructors
 
-        #endregion
+		/// <summary>
+		/// Creates a new instance of ChunkEventArgs
+		/// </summary>
+		public ChunkEventArgs(int inCurrentChunk, int inNumChunks)
+		{
+			CurrentChunk = inCurrentChunk;
+			NumChunks = inNumChunks;
+		}
 
-        #region Constructors
+		#endregion Constructors
 
-        /// <summary>
-        /// Creates a new instance of ChunkEventArgs
-        /// </summary>
-        public ChunkEventArgs(int inCurrentChunk, int inNumChunks)
-        {
-            CurrentChunk = inCurrentChunk;
-            NumChunks = inNumChunks;
-        }
 
-        #endregion
 
-        #region Methods
+		#region Properties
 
-        #endregion
+		/// <summary>
+		/// Gets the current chunk for this event
+		/// </summary>
+		public int CurrentChunk { get; protected set; }
 
-        #region Properties
+		/// <summary>
+		/// Gets the number of chunks
+		/// </summary>
+		public int NumChunks { get; protected set; }
 
-        /// <summary>
-        /// Gets the current chunk for this event
-        /// </summary>
-        public int CurrentChunk { get; protected set; }
-
-        /// <summary>
-        /// Gets the number of chunks
-        /// </summary>
-        public int NumChunks { get; protected set; }
-
-        #endregion
-    }
+		#endregion Properties
+	}
 }

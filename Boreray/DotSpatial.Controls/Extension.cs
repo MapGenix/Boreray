@@ -18,81 +18,82 @@
 //
 // ********************************************************************************************************
 
+using DotSpatial.Extensions;
 using System;
 using System.ComponentModel.Composition;
-using DotSpatial.Extensions;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// A provider is the base class that enables plug-ins to work with the Application Manager.
-    /// This is true whether it is a plug-in or a data provider or some other extension.
-    /// </summary>
-    [Serializable]
-    public abstract class Extension : AssemblyInformation, IExtension
-    {
-        #region Methods
+	/// <summary>
+	/// A provider is the base class that enables plug-ins to work with the Application Manager.
+	/// This is true whether it is a plug-in or a data provider or some other extension.
+	/// </summary>
+	[Serializable]
+	public abstract class Extension : AssemblyInformation, IExtension
+	{
+		#region Methods
 
-        /// <summary>
-        /// Activates this provider
-        /// </summary>
-        public virtual void Activate()
-        {
-            IsActive = true;
-        }
+		/// <summary>
+		/// Activates this provider
+		/// </summary>
+		public virtual void Activate()
+		{
+			IsActive = true;
+		}
 
-        /// <summary>
-        /// Deactivates this provider
-        /// </summary>
-        public virtual void Deactivate()
-        {
-            IsActive = false;
-        }
+		/// <summary>
+		/// Deactivates this provider
+		/// </summary>
+		public virtual void Deactivate()
+		{
+			IsActive = false;
+		}
 
-        #endregion
+		#endregion Methods
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Gets or sets a boolean that is true if the extension is active and running.
-        /// </summary>
-        public bool IsActive { get; set; }
+		/// <summary>
+		/// Gets or sets a boolean that is true if the extension is active and running.
+		/// </summary>
+		public bool IsActive { get; set; }
 
-        private bool deactivationAllowed = true;
-        /// <summary>
-        /// Gets a value indicating whether [deactivation is allowed].
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if [deactivation is allowed]; otherwise, <c>false</c>.
-        /// </value>
-        public bool DeactivationAllowed
-        {
-            get
-            {
-                // Assemblies in the Application Extensions folder cannot be deactivated.
-                const string STR_ApplicationExtensionsDirectoryName = @"\Application Extensions\";
-                if(!(ReferenceAssembly.Location.IndexOf(STR_ApplicationExtensionsDirectoryName, StringComparison.OrdinalIgnoreCase) < 0))
-                    deactivationAllowed = false;
-                return deactivationAllowed;
-            }
-            set
-            {
-                deactivationAllowed = value;
-            }
-        }
+		private bool deactivationAllowed = true;
 
-        /// <summary>
-        /// Specifies the activation priority order
-        /// </summary>
-        public virtual int Priority { get { return 0; } }
+		/// <summary>
+		/// Gets a value indicating whether [deactivation is allowed].
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if [deactivation is allowed]; otherwise, <c>false</c>.
+		/// </value>
+		public bool DeactivationAllowed
+		{
+			get
+			{
+				// Assemblies in the Application Extensions folder cannot be deactivated.
+				const string STR_ApplicationExtensionsDirectoryName = @"\Application Extensions\";
+				if (!(ReferenceAssembly.Location.IndexOf(STR_ApplicationExtensionsDirectoryName, StringComparison.OrdinalIgnoreCase) < 0))
+					deactivationAllowed = false;
+				return deactivationAllowed;
+			}
+			set
+			{
+				deactivationAllowed = value;
+			}
+		}
 
-        #endregion
+		/// <summary>
+		/// Specifies the activation priority order
+		/// </summary>
+		public virtual int Priority { get { return 0; } }
 
-        /// <summary>
-        /// Gets the AppManager that is responsible for activating and deactivating plugins as well as coordinating
-        /// all of the other properties.
-        /// </summary>
-        [Import]
-        public AppManager App { get; set; }
-    }
+		#endregion Properties
+
+		/// <summary>
+		/// Gets the AppManager that is responsible for activating and deactivating plugins as well as coordinating
+		/// all of the other properties.
+		/// </summary>
+		[Import]
+		public AppManager App { get; set; }
+	}
 }

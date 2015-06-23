@@ -7,36 +7,36 @@ using System;
 
 namespace DotSpatial.Controls.Docking
 {
-    /// <summary>
-    /// The active panel changed event args.
-    /// </summary>
-    public class DockablePanelEventArgs : EventArgs
-    {
-        #region Constructors and Destructors
+	/// <summary>
+	/// The active panel changed event args.
+	/// </summary>
+	public class DockablePanelEventArgs : EventArgs
+	{
+		#region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the ActivePanelChangedEventArgs class.
-        /// </summary>
-        /// <param name="activePanelKey">
-        /// The active Panel Key.
-        /// </param>
-        public DockablePanelEventArgs(string activePanelKey)
-        {
-            ActivePanelKey = activePanelKey;
-        }
+		/// <summary>
+		/// Initializes a new instance of the ActivePanelChangedEventArgs class.
+		/// </summary>
+		/// <param name="activePanelKey">
+		/// The active Panel Key.
+		/// </param>
+		public DockablePanelEventArgs(string activePanelKey)
+		{
+			ActivePanelKey = activePanelKey;
+		}
 
-        #endregion
+		#endregion Constructors and Destructors
 
-        #region Public Properties
+		#region Public Properties
 
-        /// <summary>
-        ///   Gets or sets the active panel key.
-        /// </summary>
-        /// <value>
-        ///   The active panel key.
-        /// </value>
-        public string ActivePanelKey { get; set; }
+		/// <summary>
+		///   Gets or sets the active panel key.
+		/// </summary>
+		/// <value>
+		///   The active panel key.
+		/// </value>
+		public string ActivePanelKey { get; set; }
 
-        #endregion
-    }
+		#endregion Public Properties
+	}
 }

@@ -24,92 +24,92 @@ using System.Windows.Forms;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// The extended and complete set of events associated with the Legend.
-    /// Implementing this avoids having to manually add handlers for every event.
-    /// </summary>
-    [Obsolete("Do not use it. This interface is not used in DotSpatial anymore.")] // Marked in 1.7
-    public interface ILegendHandler
-    {
-        #region Control Events
+	/// <summary>
+	/// The extended and complete set of events associated with the Legend.
+	/// Implementing this avoids having to manually add handlers for every event.
+	/// </summary>
+	[Obsolete("Do not use it. This interface is not used in DotSpatial anymore.")] // Marked in 1.7
+	public interface ILegendHandler
+	{
+		#region Control Events
 
-        /// <summary>
-        /// Occurs when a drag-and-drop operation is completed.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A DragEventArgs with the drag parameters</param>
-        void Legend_DragDrop(object sender, DragEventArgs e);
+		/// <summary>
+		/// Occurs when a drag-and-drop operation is completed.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A DragEventArgs with the drag parameters</param>
+		void Legend_DragDrop(object sender, DragEventArgs e);
 
-        /// <summary>
-        /// Occurs when the control is clicked by the mouse.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A MouseEventArgs with any parameters</param>
-        void Legend_MouseClick(object sender, MouseEventArgs e);
+		/// <summary>
+		/// Occurs when the control is clicked by the mouse.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A MouseEventArgs with any parameters</param>
+		void Legend_MouseClick(object sender, MouseEventArgs e);
 
-        /// <summary>
-        /// Occurs when the control is double clicked by the mouse.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A MouseEventArgs with any parameters</param>
-        void Legend_MouseDoubleClick(object sender, MouseEventArgs e);
+		/// <summary>
+		/// Occurs when the control is double clicked by the mouse.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A MouseEventArgs with any parameters</param>
+		void Legend_MouseDoubleClick(object sender, MouseEventArgs e);
 
-        /// <summary>
-        /// Occurs when the mouse pointer is over the control and a mouse button is pressed.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A MouseEventArgs with any parameters</param>
-        void Legend_MouseDown(object sender, MouseEventArgs e);
+		/// <summary>
+		/// Occurs when the mouse pointer is over the control and a mouse button is pressed.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A MouseEventArgs with any parameters</param>
+		void Legend_MouseDown(object sender, MouseEventArgs e);
 
-        /// <summary>
-        /// Occurs when the mouse pointer is moved over the control.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A MouseEventArgs with any parameters</param>
-        void Legend_MouseMove(object sender, MouseEventArgs e);
+		/// <summary>
+		/// Occurs when the mouse pointer is moved over the control.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A MouseEventArgs with any parameters</param>
+		void Legend_MouseMove(object sender, MouseEventArgs e);
 
-        /// <summary>
-        /// Occurs when the mouse pointer is over the control and a mouse button is released.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A MouseEventArgs with any parameters</param>
-        void Legend_MouseUp(object sender, MouseEventArgs e);
+		/// <summary>
+		/// Occurs when the mouse pointer is over the control and a mouse button is released.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A MouseEventArgs with any parameters</param>
+		void Legend_MouseUp(object sender, MouseEventArgs e);
 
-        /// <summary>
-        /// Occurs when the control is redrawn.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A PaintEventArgs with any parameters</param>
-        void Legend_Paint(object sender, PaintEventArgs e);
+		/// <summary>
+		/// Occurs when the control is redrawn.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A PaintEventArgs with any parameters</param>
+		void Legend_Paint(object sender, PaintEventArgs e);
 
-        /// <summary>
-        /// Occurs when one or more legend items is added to the list of LegendItems
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A PaintEventArgs with any parameters</param>
-        void LegendItemAdded(object sender, EventHandler e);
+		/// <summary>
+		/// Occurs when one or more legend items is added to the list of LegendItems
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A PaintEventArgs with any parameters</param>
+		void LegendItemAdded(object sender, EventHandler e);
 
-        /// <summary>
-        /// Occurs when all the legend items are cleared.
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A PaintEventArgs with any parameters</param>
-        void LegendItemsCleared(object sender, EventHandler e);
+		/// <summary>
+		/// Occurs when all the legend items are cleared.
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A PaintEventArgs with any parameters</param>
+		void LegendItemsCleared(object sender, EventHandler e);
 
-        /// <summary>
-        /// Occurs when one of the legend items in the list of LegendItems is removed
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A PaintEventArgs with any parameters</param>
-        void LegendItemRemoved(object sender, EventHandler e);
+		/// <summary>
+		/// Occurs when one of the legend items in the list of LegendItems is removed
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A PaintEventArgs with any parameters</param>
+		void LegendItemRemoved(object sender, EventHandler e);
 
-        /// <summary>
-        /// Occurs when one of the legend items in the list of LegendItems is selected
-        /// </summary>
-        /// <param name="sender">An instance of the calling object</param>
-        /// <param name="e">A PaintEventArgs with any parameters</param>
-        void LegendItemSelected(object sender, EventHandler e);
+		/// <summary>
+		/// Occurs when one of the legend items in the list of LegendItems is selected
+		/// </summary>
+		/// <param name="sender">An instance of the calling object</param>
+		/// <param name="e">A PaintEventArgs with any parameters</param>
+		void LegendItemSelected(object sender, EventHandler e);
 
-        #endregion
-    }
+		#endregion Control Events
+	}
 }

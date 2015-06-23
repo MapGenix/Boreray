@@ -22,10 +22,10 @@ using DotSpatial.Symbology;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// IGeoImageLayer
-    /// </summary>
-    public interface IMapImageLayer : IImageLayer, IMapLayer
-    {
-    }
+	/// <summary>
+	/// IGeoImageLayer
+	/// </summary>
+	public interface IMapImageLayer : IImageLayer, IMapLayer
+	{
+	}
 }

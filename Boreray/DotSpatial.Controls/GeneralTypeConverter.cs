@@ -24,47 +24,47 @@ using System.Globalization;
 
 namespace DotSpatial.Controls
 {
-    public class GeneralTypeConverter : StringConverter
-    {
-        /// <summary>
-        /// CanConvertTo
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="destinationType"></param>
-        /// <returns></returns>
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return destinationType == typeof(string);
-        }
+	public class GeneralTypeConverter : StringConverter
+	{
+		/// <summary>
+		/// CanConvertTo
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="destinationType"></param>
+		/// <returns></returns>
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			return destinationType == typeof(string);
+		}
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="culture"></param>
-        /// <param name="value"></param>
-        /// <param name="destinationType"></param>
-        /// <returns></returns>
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-        {
-            if (destinationType == typeof(string))
-            {
-                return value == null ? "[None]" : "[Edit...]";
-            }
-            return null;
-        }
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="culture"></param>
+		/// <param name="value"></param>
+		/// <param name="destinationType"></param>
+		/// <returns></returns>
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+			{
+				return value == null ? "[None]" : "[Edit...]";
+			}
+			return null;
+		}
 
-        /// <summary>
-        /// Can convert from
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="sourceType"></param>
-        /// <returns></returns>
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            if (sourceType != null) return true;
+		/// <summary>
+		/// Can convert from
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="sourceType"></param>
+		/// <returns></returns>
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType != null) return true;
 
-            return false;
-        }
-    }
+			return false;
+		}
+	}
 }

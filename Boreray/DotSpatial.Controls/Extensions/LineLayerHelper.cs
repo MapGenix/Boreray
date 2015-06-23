@@ -1,19 +1,18 @@
-﻿using System;
+﻿using DotSpatial.Data;
+using DotSpatial.Symbology;
+using DotSpatial.Topology;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using DotSpatial.Data;
-using DotSpatial.Symbology;
-using DotSpatial.Topology;
 using Point = System.Drawing.Point;
 
 namespace DotSpatial.Controls.Extensions
 {
 	public static class LineLayerHelper
 	{
-
-		const int Selected = 1;
+		private const int Selected = 1;
 
 		/// <summary>
 		/// Builds a linestring into the graphics path, using minX, maxY, dx and dy for the transformations.
@@ -153,6 +152,5 @@ namespace DotSpatial.Controls.Extensions
 				ls = category.SelectionSymbolizer;
 			return ls;
 		}
-
 	}
 }

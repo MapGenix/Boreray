@@ -1,74 +1,74 @@
+using DotSpatial.Controls.Header;
+using DotSpatial.Extensions;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Forms;
-using DotSpatial.Controls.Header;
-using DotSpatial.Extensions;
 
 namespace DotSpatial.Controls.DefaultRequiredImports
 {
-    /// <summary>
-    /// Default Status Control. It will used when no custom implementation of IStatusControl where found.
-    /// </summary>
-    [DefaultRequiredImport]
-    internal class StatusControl : IStatusControl, ISatisfyImportsExtension
-    {
-        #region Fields
-        
-        private SpatialStatusStrip _statusStrip;
-        private bool _isActivated;
+	/// <summary>
+	/// Default Status Control. It will used when no custom implementation of IStatusControl where found.
+	/// </summary>
+	[DefaultRequiredImport]
+	internal class StatusControl : IStatusControl, ISatisfyImportsExtension
+	{
+		#region Fields
 
-        #endregion
+		private SpatialStatusStrip _statusStrip;
+		private bool _isActivated;
 
-        [Import]
-        private AppManager App { get; set; }
+		#endregion Fields
 
-        [Import("Shell", typeof(ContainerControl))]
-        private ContainerControl Shell { get; set; }
+		[Import]
+		private AppManager App { get; set; }
 
-        #region IStatusControl Members
-        
-        public void Add(StatusPanel panel)
-        {
-            if (!_isActivated) return;
-            _statusStrip.Add(panel);
-        }
+		[Import("Shell", typeof(ContainerControl))]
+		private ContainerControl Shell { get; set; }
 
-        public void Progress(string key, int percent, string message)
-        {
-            if (!_isActivated) return;
-            _statusStrip.Progress(key, percent, message);
-        }
+		#region IStatusControl Members
 
-        public void Remove(StatusPanel panel)
-        {
-            if (!_isActivated) return;
-            _statusStrip.Remove(panel);
-        }
+		public void Add(StatusPanel panel)
+		{
+			if (!_isActivated) return;
+			_statusStrip.Add(panel);
+		}
 
-        #endregion
+		public void Progress(string key, int percent, string message)
+		{
+			if (!_isActivated) return;
+			_statusStrip.Progress(key, percent, message);
+		}
 
-        public int Priority { get { return 2; } }
+		public void Remove(StatusPanel panel)
+		{
+			if (!_isActivated) return;
+			_statusStrip.Remove(panel);
+		}
 
-        public void Activate()
-        {
-            if (_isActivated) return;
+		#endregion IStatusControl Members
 
-            var statusControls = App.CompositionContainer.GetExportedValues<IStatusControl>().ToList();
+		public int Priority { get { return 2; } }
 
-            // Activate only if there are no other IStatusControl implementations and
-            // custom ProgressHandler not yet set
-            if (App.ProgressHandler == null &&
-                statusControls.Count == 1 && statusControls[0].GetType() == GetType())
-            {
-                _isActivated = true;
+		public void Activate()
+		{
+			if (_isActivated) return;
 
-                // adding the status strip control
-                _statusStrip = new SpatialStatusStrip();
-                Shell.Controls.Add(_statusStrip);
+			var statusControls = App.CompositionContainer.GetExportedValues<IStatusControl>().ToList();
 
-                // adding initial status panel to the status strip control
-                Add(new ProgressStatusPanel());
-            }
-        }
-    }
+			// Activate only if there are no other IStatusControl implementations and
+			// custom ProgressHandler not yet set
+			if (App.ProgressHandler == null &&
+				statusControls.Count == 1 && statusControls[0].GetType() == GetType())
+			{
+				_isActivated = true;
+
+				// adding the status strip control
+				_statusStrip = new SpatialStatusStrip();
+				Shell.Controls.Add(_statusStrip);
+
+				// adding initial status panel to the status strip control
+				Add(new ProgressStatusPanel());
+			}
+		}
+	}
 }

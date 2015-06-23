@@ -22,37 +22,37 @@
 //                   |            | outline and background were removed leaving the class empty
 // ********************************************************************************************************
 
-using System.Drawing;
 using DotSpatial.Symbology;
+using System.Drawing;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// A control that draws a standard colored rectangle to the print layout
-    /// </summary>
-    public class LayoutRectangle : LayoutElement
-    {
-        #region ------------------- public methods
+	/// <summary>
+	/// A control that draws a standard colored rectangle to the print layout
+	/// </summary>
+	public class LayoutRectangle : LayoutElement
+	{
+		#region ------------------- public methods
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public LayoutRectangle()
-        {
-            Name = "Rectangle";
-            Background = new PolygonSymbolizer(Color.Transparent, Color.Black, 2.0);
-            ResizeStyle = ResizeStyle.HandledInternally;
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public LayoutRectangle()
+		{
+			Name = "Rectangle";
+			Background = new PolygonSymbolizer(Color.Transparent, Color.Black, 2.0);
+			ResizeStyle = ResizeStyle.HandledInternally;
+		}
 
-        /// <summary>
-        /// Doesn't need to do anything now because the drawing code is in the background property of the base class
-        /// </summary>
-        /// <param name="g"></param>
-        /// <param name="printing"></param>
-        public override void Draw(Graphics g, bool printing)
-        {
-        }
+		/// <summary>
+		/// Doesn't need to do anything now because the drawing code is in the background property of the base class
+		/// </summary>
+		/// <param name="g"></param>
+		/// <param name="printing"></param>
+		public override void Draw(Graphics g, bool printing)
+		{
+		}
 
-        #endregion
-    }
+		#endregion ------------------- public methods
+	}
 }

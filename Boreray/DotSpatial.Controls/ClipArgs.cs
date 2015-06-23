@@ -24,37 +24,36 @@ using System.Drawing;
 
 namespace DotSpatial.Controls
 {
-    public class ClipArgs : EventArgs
-    {
-        #region Constructors
+	public class ClipArgs : EventArgs
+	{
+		#region Constructors
 
-        /// <summary>
-        /// Creates a new instance of ClipArgs
-        /// </summary>
-        public ClipArgs(List<Rectangle> clipRectangles)
-        {
-            ClipRectangles = clipRectangles;
-        }
+		/// <summary>
+		/// Creates a new instance of ClipArgs
+		/// </summary>
+		public ClipArgs(List<Rectangle> clipRectangles)
+		{
+			ClipRectangles = clipRectangles;
+		}
 
-        /// <summary>
-        /// Creates a ClipArg from a single rectangle instead of a list of rectangles
-        /// </summary>
-        /// <param name="clipRectangle">The clip rectangle</param>
-        public ClipArgs(Rectangle clipRectangle)
-            : this(new List<Rectangle> { clipRectangle })
-        {
-        
-        }
+		/// <summary>
+		/// Creates a ClipArg from a single rectangle instead of a list of rectangles
+		/// </summary>
+		/// <param name="clipRectangle">The clip rectangle</param>
+		public ClipArgs(Rectangle clipRectangle)
+			: this(new List<Rectangle> { clipRectangle })
+		{
+		}
 
-        #endregion
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Gets the ClipRectangle for this event.
-        /// </summary>
-        public List<Rectangle> ClipRectangles { get; protected set; }
+		/// <summary>
+		/// Gets the ClipRectangle for this event.
+		/// </summary>
+		public List<Rectangle> ClipRectangles { get; protected set; }
 
-        #endregion
-    }
+		#endregion Properties
+	}
 }

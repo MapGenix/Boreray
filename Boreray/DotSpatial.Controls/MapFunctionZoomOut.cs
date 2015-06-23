@@ -20,65 +20,64 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using DotSpatial.Data;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// A MapFunction that can zoom the map out based on mouse clicks.
-    /// </summary>
-    public class MapFunctionZoomOut : MapFunction
-    {
-        #region Constructors
+	/// <summary>
+	/// A MapFunction that can zoom the map out based on mouse clicks.
+	/// </summary>
+	public class MapFunctionZoomOut : MapFunction
+	{
+		#region Constructors
 
-        /// <summary>
-        /// Creates a new instance of SelectTool
-        /// </summary>
-        public MapFunctionZoomOut(IMap inMap)
-            : base(inMap)
-        {
-            YieldStyle = YieldStyles.LeftButton | YieldStyles.RightButton;
-        }
+		/// <summary>
+		/// Creates a new instance of SelectTool
+		/// </summary>
+		public MapFunctionZoomOut(IMap inMap)
+			: base(inMap)
+		{
+			YieldStyle = YieldStyles.LeftButton | YieldStyles.RightButton;
+		}
 
-        #endregion
+		#endregion Constructors
 
-        /// <summary>
-        /// Handles the Mouse Up situation
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnMouseUp(GeoMouseArgs e)
-        {
-            if (e.Map.IsZoomedToMaxExtent)
-            {}
-            else
-            {
-                e.Map.IsZoomedToMaxExtent = false;
-                Map.Invalidate();
+		/// <summary>
+		/// Handles the Mouse Up situation
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnMouseUp(GeoMouseArgs e)
+		{
+			if (e.Map.IsZoomedToMaxExtent)
+			{ }
+			else
+			{
+				e.Map.IsZoomedToMaxExtent = false;
+				Map.Invalidate();
 
-                Rectangle r = e.Map.MapFrame.View;
-                int w = r.Width;
-                int h = r.Height;
+				Rectangle r = e.Map.MapFrame.View;
+				int w = r.Width;
+				int h = r.Height;
 
-                if (e.Button == MouseButtons.Left)
-                {
-                    r.Inflate(r.Width / 2, r.Height / 2);
-                    r.X += w / 2 - e.X;
-                    r.Y += h / 2 - e.Y;
-                    e.Map.MapFrame.View = r;
-                    e.Map.MapFrame.ResetExtents();
-                }
-                else
-                {
-                    r.Inflate(-r.Width / 4, -r.Height / 4);
-                    // The mouse cursor should anchor the geographic location during zoom.
-                    r.X += (e.X / 2) - w / 4;
-                    r.Y += (e.Y / 2) - h / 4;
-                    e.Map.MapFrame.View = r;
-                    e.Map.MapFrame.ResetExtents();
-                }
+				if (e.Button == MouseButtons.Left)
+				{
+					r.Inflate(r.Width / 2, r.Height / 2);
+					r.X += w / 2 - e.X;
+					r.Y += h / 2 - e.Y;
+					e.Map.MapFrame.View = r;
+					e.Map.MapFrame.ResetExtents();
+				}
+				else
+				{
+					r.Inflate(-r.Width / 4, -r.Height / 4);
+					// The mouse cursor should anchor the geographic location during zoom.
+					r.X += (e.X / 2) - w / 4;
+					r.Y += (e.Y / 2) - h / 4;
+					e.Map.MapFrame.View = r;
+					e.Map.MapFrame.ResetExtents();
+				}
 
-                base.OnMouseUp(e);
-            }
-        }
-    }
+				base.OnMouseUp(e);
+			}
+		}
+	}
 }

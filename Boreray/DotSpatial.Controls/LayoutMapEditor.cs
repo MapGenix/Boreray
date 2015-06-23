@@ -28,74 +28,74 @@ using System.Windows.Forms.Design;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// Layout Map Editor is a UIType Editor that allows selecting a new map
-    /// </summary>
-    public class LayoutMapEditor : UITypeEditor
-    {
-        IWindowsFormsEditorService _dialogProvider;
+	/// <summary>
+	/// Layout Map Editor is a UIType Editor that allows selecting a new map
+	/// </summary>
+	public class LayoutMapEditor : UITypeEditor
+	{
+		private IWindowsFormsEditorService _dialogProvider;
 
-        #region Methods
+		#region Methods
 
-        /// <summary>
-        /// Edits a value based on some user input which is collected from a character control.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="provider"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
-        {
-            _dialogProvider = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
-            LayoutScaleBar scaleBar = context.Instance as LayoutScaleBar;
-            LayoutLegend legend = context.Instance as LayoutLegend;
-            LayoutControl lc = null;
-            if (scaleBar != null && scaleBar.LayoutControl != null)
-                lc = scaleBar.LayoutControl;
-            else if (legend != null && legend.LayoutControl != null)
-                lc = legend.LayoutControl;
+		/// <summary>
+		/// Edits a value based on some user input which is collected from a character control.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="provider"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+		{
+			_dialogProvider = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+			LayoutScaleBar scaleBar = context.Instance as LayoutScaleBar;
+			LayoutLegend legend = context.Instance as LayoutLegend;
+			LayoutControl lc = null;
+			if (scaleBar != null && scaleBar.LayoutControl != null)
+				lc = scaleBar.LayoutControl;
+			else if (legend != null && legend.LayoutControl != null)
+				lc = legend.LayoutControl;
 
-            ListBox lb = new ListBox();
-            if (lc != null)
-            {
-                foreach (LayoutElement le in lc.LayoutElements.FindAll(o => (o is LayoutMap)))
-                    lb.Items.Add(le);
-                lb.SelectedItem = value;
-            }
-            else return null;
-            lb.SelectedValueChanged += LbSelectedValueChanged;
-            if (_dialogProvider != null) _dialogProvider.DropDownControl(lb);
-            return lb.SelectedItem;
-        }
+			ListBox lb = new ListBox();
+			if (lc != null)
+			{
+				foreach (LayoutElement le in lc.LayoutElements.FindAll(o => (o is LayoutMap)))
+					lb.Items.Add(le);
+				lb.SelectedItem = value;
+			}
+			else return null;
+			lb.SelectedValueChanged += LbSelectedValueChanged;
+			if (_dialogProvider != null) _dialogProvider.DropDownControl(lb);
+			return lb.SelectedItem;
+		}
 
-        private void LbSelectedValueChanged(object sender, EventArgs e)
-        {
-            _dialogProvider.CloseDropDown();
-        }
+		private void LbSelectedValueChanged(object sender, EventArgs e)
+		{
+			_dialogProvider.CloseDropDown();
+		}
 
-        /// <summary>
-        /// Gets the UITypeEditorEditStyle, which in this case is drop down.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
-        {
-            return UITypeEditorEditStyle.DropDown;
-        }
+		/// <summary>
+		/// Gets the UITypeEditorEditStyle, which in this case is drop down.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+		{
+			return UITypeEditorEditStyle.DropDown;
+		}
 
-        #endregion
+		#endregion Methods
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Ensures that we can widen the drop-down without having to close the drop down,
-        /// widen the control, and re-open it again.
-        /// </summary>
-        public override bool IsDropDownResizable
-        {
-            get { return false; }
-        }
+		/// <summary>
+		/// Ensures that we can widen the drop-down without having to close the drop down,
+		/// widen the control, and re-open it again.
+		/// </summary>
+		public override bool IsDropDownResizable
+		{
+			get { return false; }
+		}
 
-        #endregion
-    }
+		#endregion Properties
+	}
 }

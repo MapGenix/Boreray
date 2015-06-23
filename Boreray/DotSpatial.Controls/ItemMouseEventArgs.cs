@@ -22,58 +22,58 @@ using System.Windows.Forms;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// ItemMouseEventArgs
-    /// </summary>
-    public class ItemMouseEventArgs : MouseEventArgs
-    {
-        #region Private Variables
+	/// <summary>
+	/// ItemMouseEventArgs
+	/// </summary>
+	public class ItemMouseEventArgs : MouseEventArgs
+	{
+		#region Private Variables
 
-        LegendBox _box;
+		private LegendBox _box;
 
-        #endregion
+		#endregion Private Variables
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates a new instance of an ItemMouseEventArgs
-        /// </summary>
-        /// <param name="inButton">The Mouse Buttons</param>
-        /// <param name="inClicks">The number of clicks</param>
-        /// <param name="inX">The X coordinate</param>
-        /// <param name="inY">The Y coordinate</param>
-        /// <param name="inDelta">The delta of the mouse wheel</param>
-        /// <param name="inItemBox">A LegendBox for comparision</param>
-        public ItemMouseEventArgs(MouseButtons inButton, int inClicks, int inX, int inY, int inDelta, LegendBox inItemBox)
-            : base(inButton, inClicks, inX, inY, inDelta)
-        {
-            _box = inItemBox;
-        }
+		/// <summary>
+		/// Creates a new instance of an ItemMouseEventArgs
+		/// </summary>
+		/// <param name="inButton">The Mouse Buttons</param>
+		/// <param name="inClicks">The number of clicks</param>
+		/// <param name="inX">The X coordinate</param>
+		/// <param name="inY">The Y coordinate</param>
+		/// <param name="inDelta">The delta of the mouse wheel</param>
+		/// <param name="inItemBox">A LegendBox for comparision</param>
+		public ItemMouseEventArgs(MouseButtons inButton, int inClicks, int inX, int inY, int inDelta, LegendBox inItemBox)
+			: base(inButton, inClicks, inX, inY, inDelta)
+		{
+			_box = inItemBox;
+		}
 
-        /// <summary>
-        /// Creates a new instance of ItemMouseEventArgs from an existing MouseEventArgs.
-        /// </summary>
-        /// <param name="args">The existing arguments</param>
-        /// <param name="inItemBox">A LegendBox for comparison</param>
-        public ItemMouseEventArgs(MouseEventArgs args, LegendBox inItemBox)
-            : base(args.Button, args.Clicks, args.X, args.Y, args.Delta)
-        {
-            _box = inItemBox;
-        }
+		/// <summary>
+		/// Creates a new instance of ItemMouseEventArgs from an existing MouseEventArgs.
+		/// </summary>
+		/// <param name="args">The existing arguments</param>
+		/// <param name="inItemBox">A LegendBox for comparison</param>
+		public ItemMouseEventArgs(MouseEventArgs args, LegendBox inItemBox)
+			: base(args.Button, args.Clicks, args.X, args.Y, args.Delta)
+		{
+			_box = inItemBox;
+		}
 
-        #endregion
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Gets the item that received the mouse down, plus the various rectangular extents encoded in the various boxes.
-        /// </summary>
-        public LegendBox ItemBox
-        {
-            get { return _box; }
-            protected set { _box = value; }
-        }
+		/// <summary>
+		/// Gets the item that received the mouse down, plus the various rectangular extents encoded in the various boxes.
+		/// </summary>
+		public LegendBox ItemBox
+		{
+			get { return _box; }
+			protected set { _box = value; }
+		}
 
-        #endregion
-    }
+		#endregion Properties
+	}
 }

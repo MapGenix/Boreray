@@ -20,176 +20,180 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using DotSpatial.Data;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// A MapFunction that can zoom the map out based on mouse clicks.
-    /// </summary>
-    public class MapFunctionKeyNavigation : MapFunction
-    {
-        #region Private Variables
+	/// <summary>
+	/// A MapFunction that can zoom the map out based on mouse clicks.
+	/// </summary>
+	public class MapFunctionKeyNavigation : MapFunction
+	{
+		#region Private Variables
 
-        private FunctionMode previousFunction = FunctionMode.None;
-        private bool isPanningTemporarily;
-        private int KeyPanCount;
+		private FunctionMode previousFunction = FunctionMode.None;
+		private bool isPanningTemporarily;
+		private int KeyPanCount;
 
-        #endregion
+		#endregion Private Variables
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates a new instance of SelectTool
-        /// </summary>
-        public MapFunctionKeyNavigation(IMap inMap)
-            : base(inMap)
-        {
-            YieldStyle = YieldStyles.AlwaysOn;
-            BusySet = false;
-        }
+		/// <summary>
+		/// Creates a new instance of SelectTool
+		/// </summary>
+		public MapFunctionKeyNavigation(IMap inMap)
+			: base(inMap)
+		{
+			YieldStyle = YieldStyles.AlwaysOn;
+			BusySet = false;
+		}
 
-        #endregion
+		#endregion Constructors
 
-        #region Keyboard Input Hanlders
+		#region Keyboard Input Hanlders
 
-        /// <summary>
-        /// Handles the Key Up situation
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            // Allow panning if the space is pressed.
-            if (e.KeyCode == Keys.Space && isPanningTemporarily)
-            {
-                Map.FunctionMode = previousFunction;
-                isPanningTemporarily = false;
-            }
+		/// <summary>
+		/// Handles the Key Up situation
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			// Allow panning if the space is pressed.
+			if (e.KeyCode == Keys.Space && isPanningTemporarily)
+			{
+				Map.FunctionMode = previousFunction;
+				isPanningTemporarily = false;
+			}
 
-            // Arrow-Key Panning
-            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
-            {
-                Map.MapFrame.ResetExtents();
-                Map.IsBusy = false;
-                BusySet = false;
-                KeyPanCount = 0;
-            }
+			// Arrow-Key Panning
+			if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+			{
+				Map.MapFrame.ResetExtents();
+				Map.IsBusy = false;
+				BusySet = false;
+				KeyPanCount = 0;
+			}
 
-            // Large Step Panning
-            if (e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown || e.KeyCode == Keys.Home || e.KeyCode == Keys.End)
-            {
-                Map.IsBusy = true;
-                var _source = Map.MapFrame.View;
+			// Large Step Panning
+			if (e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown || e.KeyCode == Keys.Home || e.KeyCode == Keys.End)
+			{
+				Map.IsBusy = true;
+				var _source = Map.MapFrame.View;
 
-                switch (e.KeyCode)
-                {
-                    case Keys.PageUp:
-                        Map.MapFrame.View = new Rectangle(_source.X, _source.Y - (int)(_source.Height * 0.75), _source.Width, _source.Height);
-                        break;
-                    case Keys.PageDown:
-                        Map.MapFrame.View = new Rectangle(_source.X, _source.Y + (int)(_source.Height * 0.75), _source.Width, _source.Height);
-                        break;
-                    case Keys.Home:
-                        Map.MapFrame.View = new Rectangle(_source.X - (int)(_source.Width * 0.75), _source.Y, _source.Width, _source.Height);
-                        break;
-                    case Keys.End:
-                        Map.MapFrame.View = new Rectangle(_source.X + (int)(_source.Width * 0.75), _source.Y, _source.Width, _source.Height);
-                        break;
-                }
+				switch (e.KeyCode)
+				{
+					case Keys.PageUp:
+						Map.MapFrame.View = new Rectangle(_source.X, _source.Y - (int)(_source.Height * 0.75), _source.Width, _source.Height);
+						break;
 
-                Map.MapFrame.ResetExtents();
-                Map.IsBusy = false;
-            }
-        }
+					case Keys.PageDown:
+						Map.MapFrame.View = new Rectangle(_source.X, _source.Y + (int)(_source.Height * 0.75), _source.Width, _source.Height);
+						break;
 
-        /// <summary>
-        /// Handles the Key Down situation
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            // Allow panning if the space is pressed.
-            if (e.KeyCode == Keys.Space && !isPanningTemporarily)
-            {
-                previousFunction = Map.FunctionMode;
-                Map.FunctionMode = FunctionMode.Pan;
-                isPanningTemporarily = true;
-            }
+					case Keys.Home:
+						Map.MapFrame.View = new Rectangle(_source.X - (int)(_source.Width * 0.75), _source.Y, _source.Width, _source.Height);
+						break;
 
-            // Arrow-Key Panning
-            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
-            {
-                if (!BusySet)
-                {
-                    Map.IsBusy = true;
-                    BusySet = true;
-                }
+					case Keys.End:
+						Map.MapFrame.View = new Rectangle(_source.X + (int)(_source.Width * 0.75), _source.Y, _source.Width, _source.Height);
+						break;
+				}
 
-                var _source = Map.MapFrame.View;
+				Map.MapFrame.ResetExtents();
+				Map.IsBusy = false;
+			}
+		}
 
-                switch (e.KeyCode)
-                {
-                    case Keys.Up:
-                        Map.MapFrame.View = new Rectangle(_source.X, _source.Y - 20, _source.Width, _source.Height);
-                        break;
-                    case Keys.Down:
-                        Map.MapFrame.View = new Rectangle(_source.X, _source.Y + 20, _source.Width, _source.Height);
-                        break;
-                    case Keys.Left:
-                        Map.MapFrame.View = new Rectangle(_source.X - 20, _source.Y, _source.Width, _source.Height);
-                        break;
-                    case Keys.Right:
-                        Map.MapFrame.View = new Rectangle(_source.X + 20, _source.Y, _source.Width, _source.Height);
-                        break;
-                }
+		/// <summary>
+		/// Handles the Key Down situation
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			// Allow panning if the space is pressed.
+			if (e.KeyCode == Keys.Space && !isPanningTemporarily)
+			{
+				previousFunction = Map.FunctionMode;
+				Map.FunctionMode = FunctionMode.Pan;
+				isPanningTemporarily = true;
+			}
 
-                KeyPanCount++;
+			// Arrow-Key Panning
+			if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+			{
+				if (!BusySet)
+				{
+					Map.IsBusy = true;
+					BusySet = true;
+				}
 
-                if (KeyPanCount == 16)
-                {
-                    Map.MapFrame.ResetExtents();
-                    KeyPanCount = 0;
-                }
-                else
-                    Map.Invalidate();
+				var _source = Map.MapFrame.View;
 
-            }
+				switch (e.KeyCode)
+				{
+					case Keys.Up:
+						Map.MapFrame.View = new Rectangle(_source.X, _source.Y - 20, _source.Width, _source.Height);
+						break;
 
-            // Zoom Out
-            if (e.KeyCode == (Keys.LButton | Keys.MButton | Keys.Back | Keys.ShiftKey | Keys.Space | Keys.F17) || e.KeyCode == Keys.Subtract)
-            {
-                if (Map.IsZoomedToMaxExtent)
-                {
-                }
-                else
-                {
-                    Map.IsBusy = true;
-                    Rectangle r = Map.MapFrame.View;
+					case Keys.Down:
+						Map.MapFrame.View = new Rectangle(_source.X, _source.Y + 20, _source.Width, _source.Height);
+						break;
 
-                    r.Inflate(r.Width / 2, r.Height / 2);
-                    Map.MapFrame.View = r;
-                    Map.MapFrame.ResetExtents();
-                    Map.IsBusy = false;
-                }
-            }
+					case Keys.Left:
+						Map.MapFrame.View = new Rectangle(_source.X - 20, _source.Y, _source.Width, _source.Height);
+						break;
 
-            // Zoom In
-            if (e.KeyCode == (Keys.LButton | Keys.RButton | Keys.Back | Keys.ShiftKey | Keys.Space | Keys.F17) || e.KeyCode == Keys.Add)
-            {
-                Map.IsBusy = true;
-                Map.IsZoomedToMaxExtent = false;
-                Rectangle r = Map.MapFrame.View;
+					case Keys.Right:
+						Map.MapFrame.View = new Rectangle(_source.X + 20, _source.Y, _source.Width, _source.Height);
+						break;
+				}
 
-                r.Inflate(-r.Width / 4, -r.Height / 4);
+				KeyPanCount++;
 
-                Map.MapFrame.View = r;
-                Map.MapFrame.ResetExtents();
-                Map.IsBusy = false;
-            }
-        }
+				if (KeyPanCount == 16)
+				{
+					Map.MapFrame.ResetExtents();
+					KeyPanCount = 0;
+				}
+				else
+					Map.Invalidate();
+			}
 
-        #endregion
+			// Zoom Out
+			if (e.KeyCode == (Keys.LButton | Keys.MButton | Keys.Back | Keys.ShiftKey | Keys.Space | Keys.F17) || e.KeyCode == Keys.Subtract)
+			{
+				if (Map.IsZoomedToMaxExtent)
+				{
+				}
+				else
+				{
+					Map.IsBusy = true;
+					Rectangle r = Map.MapFrame.View;
 
-        public bool BusySet { get; set; }
-    }
+					r.Inflate(r.Width / 2, r.Height / 2);
+					Map.MapFrame.View = r;
+					Map.MapFrame.ResetExtents();
+					Map.IsBusy = false;
+				}
+			}
+
+			// Zoom In
+			if (e.KeyCode == (Keys.LButton | Keys.RButton | Keys.Back | Keys.ShiftKey | Keys.Space | Keys.F17) || e.KeyCode == Keys.Add)
+			{
+				Map.IsBusy = true;
+				Map.IsZoomedToMaxExtent = false;
+				Rectangle r = Map.MapFrame.View;
+
+				r.Inflate(-r.Width / 4, -r.Height / 4);
+
+				Map.MapFrame.View = r;
+				Map.MapFrame.ResetExtents();
+				Map.IsBusy = false;
+			}
+		}
+
+		#endregion Keyboard Input Hanlders
+
+		public bool BusySet { get; set; }
+	}
 }

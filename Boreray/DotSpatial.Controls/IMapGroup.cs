@@ -22,30 +22,30 @@ using DotSpatial.Symbology;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// IGeoGroup
-    /// </summary>
-    public interface IMapGroup : IGroup, IMapLayer
-    {
-        #region Properties
+	/// <summary>
+	/// IGeoGroup
+	/// </summary>
+	public interface IMapGroup : IGroup, IMapLayer
+	{
+		#region Properties
 
-        /// <summary>
-        /// Gets the GeoLayerCollection for members contained by this group.
-        /// </summary>
-        IMapLayerCollection Layers
-        {
-            get;
-            set;
-        }
+		/// <summary>
+		/// Gets the GeoLayerCollection for members contained by this group.
+		/// </summary>
+		IMapLayerCollection Layers
+		{
+			get;
+			set;
+		}
 
-        /// <summary>
-        /// Gets the map frame for this group.
-        /// </summary>
-        IMapFrame ParentMapFrame
-        {
-            get;
-        }
+		/// <summary>
+		/// Gets the map frame for this group.
+		/// </summary>
+		IMapFrame ParentMapFrame
+		{
+			get;
+		}
 
-        #endregion
-    }
+		#endregion Properties
+	}
 }

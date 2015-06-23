@@ -20,39 +20,44 @@
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// DefaultTools
-    /// </summary>
-    public enum FunctionMode
-    {
-        /// <summary>
-        /// Mousewheel still zooms the map, but left clicking brings items into the view.
-        /// </summary>
-        Info,
-        /// <summary>
-        /// Zooms into the map with the left mouse button and zooms out with the right mouse button.
-        /// </summary>
-        ZoomIn,
-        /// <summary>
-        /// Zooms out by clicking the left mouse button.
-        /// </summary>
-        ZoomOut,
-        /// <summary>
-        /// Pans the map with the left mouse button, context with the right and zooms with the mouse wheel
-        /// </summary>
-        Pan,
-        /// <summary>
-        /// Selects shapes with the left mouse button, context with the right and zooms with the mouse wheel
-        /// </summary>
-        Select,
-        /// <summary>
-        /// Left button selects, moves or edits, right produces a context menu
-        /// </summary>
-        Label,
+	/// <summary>
+	/// DefaultTools
+	/// </summary>
+	public enum FunctionMode
+	{
+		/// <summary>
+		/// Mousewheel still zooms the map, but left clicking brings items into the view.
+		/// </summary>
+		Info,
 
-        /// <summary>
-        /// Disables all the tools
-        /// </summary>
-        None,
-    }
+		/// <summary>
+		/// Zooms into the map with the left mouse button and zooms out with the right mouse button.
+		/// </summary>
+		ZoomIn,
+
+		/// <summary>
+		/// Zooms out by clicking the left mouse button.
+		/// </summary>
+		ZoomOut,
+
+		/// <summary>
+		/// Pans the map with the left mouse button, context with the right and zooms with the mouse wheel
+		/// </summary>
+		Pan,
+
+		/// <summary>
+		/// Selects shapes with the left mouse button, context with the right and zooms with the mouse wheel
+		/// </summary>
+		Select,
+
+		/// <summary>
+		/// Left button selects, moves or edits, right produces a context menu
+		/// </summary>
+		Label,
+
+		/// <summary>
+		/// Disables all the tools
+		/// </summary>
+		None,
+	}
 }

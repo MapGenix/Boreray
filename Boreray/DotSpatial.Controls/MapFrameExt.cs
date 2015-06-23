@@ -18,76 +18,76 @@
 //
 // ********************************************************************************************************
 
-using System.Collections.Generic;
 using DotSpatial.Symbology;
+using System.Collections.Generic;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// Extension methods for accessing the layers (including nested layers) and groups (including nested groups) of the
-    /// map frame
-    /// </summary>
-    public static class MapFrameExt
-    {
-        /// <summary>
-        /// Gets all layers of the map frame including layers which are nested
-        /// within groups. The group objects themselves are not included in this list,
-        /// but all FeatureLayers, RasterLayers, ImageLayers and other layers are included.
-        /// </summary>
-        /// <returns>The list of the layers</returns>
-        public static List<ILayer> GetAllLayers(this IMapFrame mapFrame)
-        {
-            var layerList = new List<ILayer>();
-            GetNestedLayers(mapFrame, layerList);
-            return layerList;
-        }
+	/// <summary>
+	/// Extension methods for accessing the layers (including nested layers) and groups (including nested groups) of the
+	/// map frame
+	/// </summary>
+	public static class MapFrameExt
+	{
+		/// <summary>
+		/// Gets all layers of the map frame including layers which are nested
+		/// within groups. The group objects themselves are not included in this list,
+		/// but all FeatureLayers, RasterLayers, ImageLayers and other layers are included.
+		/// </summary>
+		/// <returns>The list of the layers</returns>
+		public static List<ILayer> GetAllLayers(this IMapFrame mapFrame)
+		{
+			var layerList = new List<ILayer>();
+			GetNestedLayers(mapFrame, layerList);
+			return layerList;
+		}
 
-        private static void GetNestedLayers(IMapGroup grp, List<ILayer> layerList)
-        {
-            //initialize the layer list if required
-            if (layerList == null) layerList = new List<ILayer>();
+		private static void GetNestedLayers(IMapGroup grp, List<ILayer> layerList)
+		{
+			//initialize the layer list if required
+			if (layerList == null) layerList = new List<ILayer>();
 
-            //recursive function -- all nested groups and layers are considered
-            foreach (var lyr in grp.Layers)
-            {
-                grp = lyr as IMapGroup;
-                if (grp != null)
-                {
-                    GetNestedLayers(grp, layerList);
-                }
-                else
-                {
-                    layerList.Add(lyr);
-                }
-            }
-        }
+			//recursive function -- all nested groups and layers are considered
+			foreach (var lyr in grp.Layers)
+			{
+				grp = lyr as IMapGroup;
+				if (grp != null)
+				{
+					GetNestedLayers(grp, layerList);
+				}
+				else
+				{
+					layerList.Add(lyr);
+				}
+			}
+		}
 
-        /// <summary>
-        /// Gets all map groups in the map including the nested groups
-        /// </summary>
-        /// <returns>the list of the groups</returns>
-        public static List<IMapGroup> GetAllGroups(this IMapFrame mapFrame)
-        {
-            var groupList = new List<IMapGroup>();
-            GetNestedGroups(mapFrame, groupList);
-            return groupList;
-        }
+		/// <summary>
+		/// Gets all map groups in the map including the nested groups
+		/// </summary>
+		/// <returns>the list of the groups</returns>
+		public static List<IMapGroup> GetAllGroups(this IMapFrame mapFrame)
+		{
+			var groupList = new List<IMapGroup>();
+			GetNestedGroups(mapFrame, groupList);
+			return groupList;
+		}
 
-        private static void GetNestedGroups(IMapGroup grp, List<IMapGroup> groupList)
-        {
-            //initialize the layer list if required
-            if (groupList == null) groupList = new List<IMapGroup>();
+		private static void GetNestedGroups(IMapGroup grp, List<IMapGroup> groupList)
+		{
+			//initialize the layer list if required
+			if (groupList == null) groupList = new List<IMapGroup>();
 
-            //recursive function -- all nested groups and layers are considered
-            foreach (var lyr in grp.Layers)
-            {
-                grp = lyr as IMapGroup;
-                if (grp != null)
-                {
-                    GetNestedGroups(grp, groupList);
-                    groupList.Add(grp);
-                }
-            }
-        }
-    }
+			//recursive function -- all nested groups and layers are considered
+			foreach (var lyr in grp.Layers)
+			{
+				grp = lyr as IMapGroup;
+				if (grp != null)
+				{
+					GetNestedGroups(grp, groupList);
+					groupList.Add(grp);
+				}
+			}
+		}
+	}
 }

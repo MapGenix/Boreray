@@ -18,21 +18,21 @@
 //
 // ********************************************************************************************************
 
-using System.Collections.Generic;
 using DotSpatial.Data;
 using DotSpatial.Symbology;
+using System.Collections.Generic;
 
 namespace DotSpatial.Controls
 {
-    /// <summary>
-    /// Layer
-    /// </summary>
-    public interface IMapLayer : ILayer
-    {
-        /// <summary>
-        /// This draws content from the specified geographic regions onto the specified graphics
-        /// object specified by MapArgs.
-        /// </summary>
-        void DrawRegions(MapArgs args, List<Extent> regions);
-    }
+	/// <summary>
+	/// Layer
+	/// </summary>
+	public interface IMapLayer : ILayer
+	{
+		/// <summary>
+		/// This draws content from the specified geographic regions onto the specified graphics
+		/// object specified by MapArgs.
+		/// </summary>
+		void DrawRegions(MapArgs args, List<Extent> regions);
+	}
 }
