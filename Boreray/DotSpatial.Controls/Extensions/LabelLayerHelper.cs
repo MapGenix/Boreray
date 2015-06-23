@@ -2,9 +2,11 @@
 using DotSpatial.Symbology;
 using DotSpatial.Topology;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace DotSpatial.Controls.Extensions
 {
@@ -192,6 +194,52 @@ namespace DotSpatial.Controls.Extensions
 			Extent r = region.Copy();
 			r.ExpandBy(region.Width, region.Height);
 			return r;
+		}
+
+		public static void Prioritize(ILabelCategory category, ILabelCategory cat, List<IFeature> catFeatures)
+		{
+			if (category.Symbolizer.PriorityField != "FID")
+			{
+				Feature.ComparisonField = cat.Symbolizer.PriorityField;
+				catFeatures.Sort();
+				// When preventing collisions, we want to do high priority first.
+				// otherwise, do high priority last.
+				if (cat.Symbolizer.PreventCollisions)
+				{
+					if (!cat.Symbolizer.PrioritizeLowValues)
+					{
+						catFeatures.Reverse();
+					}
+				}
+				else
+				{
+					if (cat.Symbolizer.PrioritizeLowValues)
+					{
+						catFeatures.Reverse();
+					}
+				}
+			}
+		}
+
+		public static List<IFeature> FilterCatFeatures(IEnumerable<IFeature> features, Dictionary<IFeature, LabelDrawState> drawStates, ILabelCategory cat)
+		{
+			List<IFeature> catFeatures = new List<IFeature>();
+			foreach (IFeature f in features)
+			{
+				if (drawStates.ContainsKey(f))
+				{
+					if (drawStates[f].Category == cat)
+					{
+						catFeatures.Add(f);
+					}
+				}
+			}
+			return catFeatures;
+		}
+
+		public static bool Collides(RectangleF rectangle, IEnumerable<RectangleF> drawnRectangles)
+		{
+			return drawnRectangles.Any(rectangle.IntersectsWith);
 		}
 	}
 }

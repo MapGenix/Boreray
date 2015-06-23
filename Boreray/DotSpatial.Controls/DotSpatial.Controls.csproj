@@ -118,6 +118,7 @@
     <Compile Include="Extensions\GraphicsHelper.cs" />
     <Compile Include="Extensions\LabelLayerHelper.cs" />
     <Compile Include="Extensions\LineLayerHelper.cs" />
+    <Compile Include="Extensions\PointLayerHelper.cs" />
     <Compile Include="FeatureIdentifier.Designer.cs">
       <DependentUpon>FeatureIdentifier.cs</DependentUpon>
     </Compile>

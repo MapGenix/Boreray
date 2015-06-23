@@ -221,7 +221,8 @@ namespace DotSpatial.Controls
 		private void DrawFeatures(MapArgs e, IEnumerable<int> features)
 		{
 			// Check that exists at least one category with Expression
-			if (Symbology.Categories.All(_ => string.IsNullOrEmpty(_.Expression))) return;
+			if (Symbology.Categories.All(_ => string.IsNullOrEmpty(_.Expression))) 
+				return;
 
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
 
@@ -232,24 +233,30 @@ namespace DotSpatial.Controls
 				CreateIndexedLabels();
 			}
 			FastLabelDrawnState[] drawStates = FastDrawnStates;
-			if (drawStates == null) return;
-			//Sets the graphics objects smoothing modes
+			if (drawStates == null) 
+				return;
+			
 			g.TextRenderingHint = TextRenderingHint.AntiAlias;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
+
+			Action<int, IFeature> drawPolygon = (fid, feature) => DrawPolygonFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
+			Action<int, IFeature> drawLine = (fid, feature) => DrawLineFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
+			Action<int, IFeature> drawPoint = (fid, feature) => DrawPointFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
+					
 
 			Action<int, IFeature> drawFeature;
 			switch (FeatureSet.FeatureType)
 			{
 				case FeatureType.Polygon:
-					drawFeature = (fid, feature) => DrawPolygonFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
+					drawFeature = drawPolygon;
 					break;
 
 				case FeatureType.Line:
-					drawFeature = (fid, feature) => DrawLineFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
+					drawFeature = drawLine;
 					break;
 
 				case FeatureType.Point:
-					drawFeature = (fid, feature) => DrawPointFeature(e, g, feature, drawStates[fid].Category, drawStates[fid].Selected, ExistingLabels);
+					drawFeature = drawPoint;
 					break;
 
 				default:
@@ -258,38 +265,9 @@ namespace DotSpatial.Controls
 
 			foreach (var category in Symbology.Categories)
 			{
-				var catFeatures = new List<int>();
-				foreach (int fid in features)
-				{
-					if (drawStates[fid] == null || drawStates[fid].Category == null) continue;
-					if (drawStates[fid].Category == category)
-					{
-						catFeatures.Add(fid);
-					}
-				}
-				// Now that we are restricted to a certain category, we can look at
-				// priority
-				if (category.Symbolizer.PriorityField != "FID")
-				{
-					Feature.ComparisonField = category.Symbolizer.PriorityField;
-					catFeatures.Sort();
-					// When preventing collisions, we want to do high priority first.
-					// otherwise, do high priority last.
-					if (category.Symbolizer.PreventCollisions)
-					{
-						if (!category.Symbolizer.PrioritizeLowValues)
-						{
-							catFeatures.Reverse();
-						}
-					}
-					else
-					{
-						if (category.Symbolizer.PrioritizeLowValues)
-						{
-							catFeatures.Reverse();
-						}
-					}
-				}
+				List<int> catFeatures = FilterCategoryFeatures(features, drawStates, category);
+				
+				Prioritize(category, catFeatures);
 
 				foreach (var fid in catFeatures)
 				{
@@ -300,6 +278,46 @@ namespace DotSpatial.Controls
 			}
 
 			if (e.Device == null) g.Dispose();
+		}
+
+		private static void Prioritize(ILabelCategory category, List<int> catFeatures)
+		{
+			if (category.Symbolizer.PriorityField != "FID")
+			{
+				Feature.ComparisonField = category.Symbolizer.PriorityField;
+				catFeatures.Sort();
+				// When preventing collisions, we want to do high priority first.
+				// otherwise, do high priority last.
+				if (category.Symbolizer.PreventCollisions)
+				{
+					if (!category.Symbolizer.PrioritizeLowValues)
+					{
+						catFeatures.Reverse();
+					}
+				}
+				else
+				{
+					if (category.Symbolizer.PrioritizeLowValues)
+					{
+						catFeatures.Reverse();
+					}
+				}
+			}
+		}
+
+		private static List<int> FilterCategoryFeatures(IEnumerable<int> features, FastLabelDrawnState[] drawStates,
+			ILabelCategory category)
+		{
+			var catFeatures = new List<int>();
+			foreach (int fid in features)
+			{
+				if (drawStates[fid] == null || drawStates[fid].Category == null) continue;
+				if (drawStates[fid].Category == category)
+				{
+					catFeatures.Add(fid);
+				}
+			}
+			return catFeatures;
 		}
 
 		// This draws the individual line features
@@ -316,24 +334,29 @@ namespace DotSpatial.Controls
 				CreateLabels();
 			}
 			Dictionary<IFeature, LabelDrawState> drawStates = DrawnStates;
-			if (drawStates == null) return;
-			//Sets the graphics objects smoothing modes
+			if (drawStates == null) 
+				return;
 			g.TextRenderingHint = TextRenderingHint.AntiAlias;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
+
+			Action<IFeature> drawPolygon = f => DrawPolygonFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
+			Action<IFeature> drawLine = f => DrawLineFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
+			Action<IFeature> drawPoint = f => DrawPointFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
+									
 
 			Action<IFeature> drawFeature;
 			switch (features.First().FeatureType)
 			{
 				case FeatureType.Polygon:
-					drawFeature = f => DrawPolygonFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
+					drawFeature =drawPolygon;
 					break;
 
 				case FeatureType.Line:
-					drawFeature = f => DrawLineFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
+					drawFeature = drawLine;
 					break;
 
 				case FeatureType.Point:
-					drawFeature = f => DrawPointFeature(e, g, f, drawStates[f].Category, drawStates[f].Selected, ExistingLabels);
+					drawFeature = drawPoint;
 					break;
 
 				default:
@@ -343,43 +366,13 @@ namespace DotSpatial.Controls
 			foreach (ILabelCategory category in Symbology.Categories)
 			{
 				var cat = category; // prevent access to unmodified closure problems
-				List<IFeature> catFeatures = new List<IFeature>();
-				foreach (IFeature f in features)
-				{
-					if (drawStates.ContainsKey(f))
-					{
-						if (drawStates[f].Category == cat)
-						{
-							catFeatures.Add(f);
-						}
-					}
-				}
-				// Now that we are restricted to a certain category, we can look at
-				// priority
-				if (category.Symbolizer.PriorityField != "FID")
-				{
-					Feature.ComparisonField = cat.Symbolizer.PriorityField;
-					catFeatures.Sort();
-					// When preventing collisions, we want to do high priority first.
-					// otherwise, do high priority last.
-					if (cat.Symbolizer.PreventCollisions)
-					{
-						if (!cat.Symbolizer.PrioritizeLowValues)
-						{
-							catFeatures.Reverse();
-						}
-					}
-					else
-					{
-						if (cat.Symbolizer.PrioritizeLowValues)
-						{
-							catFeatures.Reverse();
-						}
-					}
-				}
+				var catFeatures = LabelLayerHelper.FilterCatFeatures(features, drawStates, cat);
+
+				LabelLayerHelper.Prioritize(category, cat, catFeatures);
 				for (int i = 0; i < catFeatures.Count; i++)
 				{
-					if (!FeatureLayer.DrawnStates[i].Visible) continue;
+					if (!FeatureLayer.DrawnStates[i].Visible)
+						continue;
 					drawFeature(catFeatures[i]);
 				}
 			}
@@ -387,10 +380,7 @@ namespace DotSpatial.Controls
 			if (e.Device == null) g.Dispose();
 		}
 
-		private static bool Collides(RectangleF rectangle, IEnumerable<RectangleF> drawnRectangles)
-		{
-			return drawnRectangles.Any(rectangle.IntersectsWith);
-		}
+		
 
 		/// <summary>
 		/// Draws a label on a polygon with various different methods
@@ -445,7 +435,7 @@ namespace DotSpatial.Controls
 			if (labelBounds.IsEmpty || !e.ImageRectangle.IntersectsWith(labelBounds)) return;
 			if (symb.PreventCollisions)
 			{
-				if (!Collides(labelBounds, existingLabels))
+				if (!LabelLayerHelper.Collides(labelBounds, existingLabels))
 				{
 					DrawLabel(g, txt, labelBounds, symb, f);
 					existingLabels.Add(labelBounds);
