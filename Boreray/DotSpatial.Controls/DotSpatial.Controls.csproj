@@ -60,6 +60,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotSpatial.Extensions.1.7\lib\net40-Client\DotSpatial.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="DotSpatial.Modeling.Forms, Version=1.7.0.0, Culture=neutral, PublicKeyToken=712bef29a31a9354, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotSpatial.Modeling.Forms.1.7\lib\net40-Client\DotSpatial.Modeling.Forms.dll</HintPath>
+    </Reference>
     <Reference Include="DotSpatial.Mono, Version=1.7.0.0, Culture=neutral, PublicKeyToken=425ba4de41127026, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotSpatial.Mono.1.7\lib\net40-Client\DotSpatial.Mono.dll</HintPath>
@@ -207,7 +211,9 @@
     <Compile Include="DrawLegendItemArgs.cs" />
     <Compile Include="ILegend.cs" />
     <Compile Include="ILegendHandler.cs" />
-    <Compile Include="Legend.cs" />
+    <Compile Include="Legend.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ItemMouseEventArgs.cs" />
     <Compile Include="LegendBox.cs" />
     <Compile Include="ListBoxDialog.cs">
@@ -315,7 +321,9 @@
     <Compile Include="IconMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SpatialProgressBar.cs" />
+    <Compile Include="SpatialProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SpatialStatusStrip.cs">
       <SubType>Component</SubType>
     </Compile>
