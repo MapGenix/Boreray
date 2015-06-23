@@ -102,6 +102,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\Caches.cs" />
     <Compile Include="DatelineCrossingMap.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -110,6 +111,7 @@
     <Compile Include="DefaultRequiredImports\DockManager.cs" />
     <Compile Include="DefaultRequiredImports\HeaderControl.cs" />
     <Compile Include="DefaultRequiredImports\StatusControl.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Docking\DockablePanelEventArgs.cs" />
     <Compile Include="Docking\DockablePanel.cs" />
     <Compile Include="Extension.cs" />

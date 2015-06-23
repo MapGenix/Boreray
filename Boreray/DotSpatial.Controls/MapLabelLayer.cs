@@ -23,12 +23,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
+using DotSpatial.Controls.Extensions;
 using DotSpatial.Data;
 using DotSpatial.Symbology;
 using DotSpatial.Topology;
@@ -1019,43 +1019,6 @@ namespace DotSpatial.Controls
         /// </summary>
         protected virtual void OnStartDrawing()
         {
-        }
-
-        private class Caches
-        {
-            private readonly Dictionary<string, Font> _symbFonts = new Dictionary<string, Font>();
-            private readonly Dictionary<Color, Brush> _solidBrushes = new Dictionary<Color, Brush>();
-            private readonly Dictionary<Color, Pen> _pens = new Dictionary<Color, Pen>();
-
-            public Font GetFont(ILabelSymbolizer symb)
-            {
-                var fontDesc = string.Format("{0};{1};{2}", symb.FontFamily, symb.FontSize, symb.FontStyle);
-                return _symbFonts.GetOrAdd(fontDesc, _ => symb.GetFont());
-            }
-
-            public Brush GetSolidBrush(Color color)
-            {
-                return _solidBrushes.GetOrAdd(color, _ => new SolidBrush(color));
-            }
-
-            public Pen GetPen(Color color)
-            {
-                return _pens.GetOrAdd(color, _ => new Pen(color));
-            }
-        }
-    }
-
-    internal static class DictionaryExtensions
-    {
-        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key, Func<TKey, TValue> valueFactory)
-        {
-            TValue value;
-            if (!dic.TryGetValue(key, out value))
-            {
-                value = valueFactory(key);
-                dic.Add(key, value);
-            }
-            return value;
         }
     }
 }
