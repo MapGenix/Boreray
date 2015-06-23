@@ -11,12 +11,6 @@
 // limitations under the License.
 //
 // The Original Code is from MapWindow.dll version 6.0
-//
-// The Initial Developer of this Original Code is Ted Dunsford. Created 11/17/2008 10:20:46 AM
-//
-// Contributor(s): (Open source contributors should list themselves and their modifications here).
-// Kyle Ellison 01/07/2010 Changed Draw*Feature from private to public to expose label functionality
-//
 // ********************************************************************************************************
 
 using DotSpatial.Controls.Extensions;
@@ -56,12 +50,6 @@ namespace DotSpatial.Controls
 		/// </summary>
 		private static readonly List<RectangleF> ExistingLabels = new List<RectangleF>(); // for collision prevention, tracks existing labels.
 
-		private Image _backBuffer; // draw to the back buffer, and swap to the stencil when done.
-		private IEnvelope _bufferExtent; // the geographic extent of the current buffer.
-		private Rectangle _bufferRectangle;
-		private int _chunkSize;
-		private bool _isInitialized;
-		private Image _stencil; // draw features to the stencil
 		private static readonly Caches Caches = new Caches();
 
 		#endregion Private Variables
@@ -98,7 +86,7 @@ namespace DotSpatial.Controls
 
 		private void Configure()
 		{
-			_chunkSize = 10000;
+			ChunkSize = 10000;
 		}
 
 		#endregion Constructors
@@ -126,43 +114,19 @@ namespace DotSpatial.Controls
 
 			if (FeatureSet.IndexMode)
 			{
-				// First determine the number of features we are talking about based on region.
-				List<int> drawIndices = new List<int>();
-				foreach (Extent region in regions)
-				{
-					if (region != null)
-					{
-						// We need to consider labels that go off the screen.  figure a region
-						// that is larger.
-						Extent sur = region.Copy();
-						sur.ExpandBy(region.Width, region.Height);
-						// Use union to prevent duplicates.  No sense in drawing more than we have to.
-						drawIndices = drawIndices.Union(FeatureSet.SelectIndices(sur)).ToList();
-					}
-				}
+				List<int> drawIndices = CreateIndiceList(regions);
 				List<Rectangle> clips = args.ProjToPixel(regions);
 				DrawFeatures(args, drawIndices, clips, true);
 			}
 			else
 			{
-				// First determine the number of features we are talking about based on region.
-				List<IFeature> drawList = new List<IFeature>();
-				foreach (Extent region in regions)
-				{
-					if (region != null)
-					{
-						// We need to consider labels that go off the screen.  figure a region
-						// that is larger.
-						Extent r = region.Copy();
-						r.ExpandBy(region.Width, region.Height);
-						// Use union to prevent duplicates.  No sense in drawing more than we have to.
-						drawList = drawList.Union(FeatureSet.Select(r)).ToList();
-					}
-				}
+				List<IFeature> drawList = CreateFeatureList(regions);
 				List<Rectangle> clipRects = args.ProjToPixel(regions);
 				DrawFeatures(args, drawList, clipRects, true);
 			}
 		}
+
+		
 
 		/// <summary>
 		/// Call StartDrawing before using this.
@@ -172,8 +136,8 @@ namespace DotSpatial.Controls
 		/// will replace content with transparent pixels.</param>
 		public void Clear(List<Rectangle> rectangles, Color color)
 		{
-			if (_backBuffer == null) return;
-			Graphics g = Graphics.FromImage(_backBuffer);
+			if (BackBuffer == null) return;
+			Graphics g = Graphics.FromImage(BackBuffer);
 			foreach (Rectangle r in rectangles)
 			{
 				if (r.IsEmpty == false)
@@ -259,7 +223,7 @@ namespace DotSpatial.Controls
 			// Check that exists at least one category with Expression
 			if (Symbology.Categories.All(_ => string.IsNullOrEmpty(_.Expression))) return;
 
-			Graphics g = e.Device ?? Graphics.FromImage(_backBuffer);
+			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
 
 			// Only draw features that are currently visible.
 
@@ -344,7 +308,7 @@ namespace DotSpatial.Controls
 			// Check that exists at least one category with Expression
 			if (Symbology.Categories.All(_ => string.IsNullOrEmpty(_.Expression))) return;
 
-			Graphics g = e.Device ?? Graphics.FromImage(_backBuffer);
+			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
 
 			// Only draw features that are currently visible.
 			if (DrawnStates == null || !DrawnStates.ContainsKey(features.First()))
@@ -626,7 +590,7 @@ namespace DotSpatial.Controls
 
 			// Rotate text
 			var angleToRotate = LabelLayerHelper.GetAngleToRotate(symb, feature);
-			LabelLayerHelper.RotateAt(g, labelBounds.X, labelBounds.Y, angleToRotate);
+			GraphicsHelper.RotateAt(g, labelBounds.X, labelBounds.Y, angleToRotate);
 
 			// Draws the text outline
 			if (symb.BackColorEnabled && symb.BackColor != Color.Transparent)
@@ -692,8 +656,8 @@ namespace DotSpatial.Controls
 		public void FinishDrawing()
 		{
 			OnFinishDrawing();
-			if (_stencil != null && _stencil != _backBuffer) _stencil.Dispose();
-			_stencil = _backBuffer;
+			if (Buffer != null && Buffer != BackBuffer) Buffer.Dispose();
+			Buffer = BackBuffer;
 			FeatureLayer.Invalidate();
 		}
 
@@ -731,54 +695,34 @@ namespace DotSpatial.Controls
 		/// Gets or sets the back buffer that will be drawn to as part of the initialization process.
 		/// </summary>
 		[ShallowCopy, Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Image BackBuffer
-		{
-			get { return _backBuffer; }
-			set { _backBuffer = value; }
-		}
+		public Image BackBuffer { get; set; }
 
 		/// <summary>
 		/// Gets the current buffer.
 		/// </summary>
 		[ShallowCopy, Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Image Buffer
-		{
-			get { return _stencil; }
-			set { _stencil = value; }
-		}
+		public Image Buffer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the geographic region represented by the buffer
 		/// Calling Initialize will set this automatically.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IEnvelope BufferEnvelope
-		{
-			get { return _bufferExtent; }
-			set { _bufferExtent = value; }
-		}
+		public IEnvelope BufferEnvelope { get; set; }
 
 		/// <summary>
 		/// Gets or sets the rectangle in pixels to use as the back buffer.
 		/// Calling Initialize will set this automatically.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Rectangle BufferRectangle
-		{
-			get { return _bufferRectangle; }
-			set { _bufferRectangle = value; }
-		}
+		public Rectangle BufferRectangle { get; set; }
 
 		/// <summary>
 		/// Gets or sets the maximum number of labels that will be rendered before
 		/// refreshing the screen.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int ChunkSize
-		{
-			get { return _chunkSize; }
-			set { _chunkSize = value; }
-		}
+		public int ChunkSize { get; set; }
 
 		/// <summary>
 		/// Gets or sets the MapFeatureLayer that this label layer is attached to.
@@ -794,11 +738,7 @@ namespace DotSpatial.Controls
 		/// Gets or sets whether or not this layer has been initialized.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public new bool IsInitialized
-		{
-			get { return _isInitialized; }
-			set { _isInitialized = value; }
-		}
+		public new bool IsInitialized { get; set; }
 
 		#endregion Properties
 
@@ -829,5 +769,43 @@ namespace DotSpatial.Controls
 		protected virtual void OnStartDrawing()
 		{
 		}
+
+		private List<IFeature> CreateFeatureList(List<Extent> regions)
+		{
+			// First determine the number of features we are talking about based on region.
+			List<IFeature> drawList = new List<IFeature>();
+			foreach (Extent region in regions)
+			{
+				if (region != null)
+				{
+					// We need to consider labels that go off the screen.  figure a region
+					// that is larger.
+					Extent r = LabelLayerHelper.CreateExpandedRegion(region);
+					// Use union to prevent duplicates.  No sense in drawing more than we have to.
+					drawList = drawList.Union(FeatureSet.Select(r)).ToList();
+				}
+			}
+			return drawList;
+		}
+
+		private List<int> CreateIndiceList(List<Extent> regions)
+		{
+			// First determine the number of features we are talking about based on region.
+			List<int> drawIndices = new List<int>();
+			foreach (Extent region in regions)
+			{
+				if (region != null)
+				{
+					// We need to consider labels that go off the screen.  figure a region
+					// that is larger.
+					Extent sur = LabelLayerHelper.CreateExpandedRegion(region);
+					// Use union to prevent duplicates.  No sense in drawing more than we have to.
+					drawIndices = drawIndices.Union(FeatureSet.SelectIndices(sur)).ToList();
+				}
+			}
+			return drawIndices;
+		}
+
+		
 	}
 }

@@ -43,13 +43,7 @@ namespace DotSpatial.Controls.Extensions
 			return 0;
 		}
 
-		public static void RotateAt(Graphics gr, float cx, float cy, float angle)
-		{
-			gr.ResetTransform();
-			gr.TranslateTransform(-cx, -cy, MatrixOrder.Append);
-			gr.RotateTransform(angle, MatrixOrder.Append);
-			gr.TranslateTransform(cx, cy, MatrixOrder.Append);
-		}
+		
 
 		public static string GetLabelText(IFeature feature, ILabelCategory category, ILabelSymbolizer symb)
 		{
@@ -193,6 +187,11 @@ namespace DotSpatial.Controls.Extensions
 			return new RectangleF(x, y, lz.Width, lz.Height);
 		}
 
-
+		public static Extent CreateExpandedRegion(Extent region)
+		{
+			Extent r = region.Copy();
+			r.ExpandBy(region.Width, region.Height);
+			return r;
+		}
 	}
 }
