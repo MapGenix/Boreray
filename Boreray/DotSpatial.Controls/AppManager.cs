@@ -601,7 +601,7 @@ namespace DotSpatial.Controls
 				// Add files in the current directory as well.
 				Trace.WriteLine("Cataloging: " + dir);
 				// UpdateSplashScreen("Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit));
-				message = "Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit);
+				message = "Cataloging: " + StringFactory.PrefixWithEllipsis(dir, SplashDirectoryMessageLimit);
 				if (!DirectoryCatalogExists(catalog, dir))
 					Loader.TryLoadingCatalog(catalog, new DirectoryCatalog(dir));
 			}
@@ -695,7 +695,7 @@ namespace DotSpatial.Controls
 			foreach (var dir in directories)
 			{
 				Trace.WriteLine("Cataloging: " + dir);
-				message = "Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit);
+				message = "Cataloging: " + StringFactory.PrefixWithEllipsis(dir, SplashDirectoryMessageLimit);
 				if (!DirectoryCatalogExists(catalog, dir))
 					Loader.TryLoadingCatalog(catalog, new DirectoryCatalog(dir));
 			}
@@ -716,12 +716,7 @@ namespace DotSpatial.Controls
 				h(this, ea);
 		}
 
-		private static string PrefixWithEllipsis(string text, int length)
-		{
-			if (text.Length <= length) return text;
-
-			return "..." + text.Substring(Math.Max(2, text.Length - length - 3));
-		}
+		
 
 		private void RefreshExtensions(AggregateCatalog catalog)
 		{

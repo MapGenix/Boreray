@@ -1,9 +1,4 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="PackageManager.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
-
+﻿
 namespace DotSpatial.Controls.Extensions
 {
     using System;
@@ -114,11 +109,11 @@ namespace DotSpatial.Controls.Extensions
         /// </summary>
         public static void TryDeleteAllPackages()
         {
-            if (Directory.Exists(DotSpatial.Controls.AppManager.AbsolutePathToExtensions))
+            if (Directory.Exists(AppManager.AbsolutePathToExtensions))
             {
                 try
                 {
-                    DeleteDirectory(DotSpatial.Controls.AppManager.AbsolutePathToExtensions);
+                    DeleteDirectory(AppManager.AbsolutePathToExtensions);
                 }
                 catch (ArgumentException) { }
                 catch (DirectoryNotFoundException) { }
@@ -132,7 +127,7 @@ namespace DotSpatial.Controls.Extensions
         /// Deletes the directory and any files, recursively.
         /// </summary>
         /// <param name="path">The path.</param>
-        internal static void DeleteDirectory(string path)
+        public static void DeleteDirectory(string path)
         {
             string[] files = Directory.GetFiles(path);
             string[] dirs = Directory.GetDirectories(path);

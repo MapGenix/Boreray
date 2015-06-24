@@ -100,6 +100,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Telerik.JustMock">
+      <HintPath>..\packages\JustMock.2015.2.616.2\lib\Net35\Telerik.JustMock.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\Caches.cs" />
@@ -119,6 +122,7 @@
     <Compile Include="Extensions\LabelLayerHelper.cs" />
     <Compile Include="Extensions\LineLayerHelper.cs" />
     <Compile Include="Extensions\Map\Loader.cs" />
+    <Compile Include="Extensions\Map\StringFactory.cs" />
     <Compile Include="Extensions\PointLayerHelper.cs" />
     <Compile Include="FeatureIdentifier.Designer.cs">
       <DependentUpon>FeatureIdentifier.cs</DependentUpon>

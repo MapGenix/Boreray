@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using DotSpatial.Modeling.Forms;
 using NUnit.Framework;
 
 namespace DotSpatial.Controls.Tests
@@ -11,9 +13,6 @@ namespace DotSpatial.Controls.Tests
     [TestFixture()]
     public class AppManagerTest
     {
-        /// <summary>
-        ///A test for GetCustomSettingDefault
-        ///</summary>
         [Test]
         public void GetCustomSettingDefaultTest()
         {
@@ -24,13 +23,10 @@ namespace DotSpatial.Controls.Tests
             string uniqueName = "customsettingname";
             var expected = DateTime.Now;
             var actual = target.SerializationManager.GetCustomSetting(uniqueName, expected);
-            // checks that the default value is returned correctly
             Assert.AreEqual(expected, actual);
         }
 
-        /// <summary>
-        ///A test for GetCustomSettingFromMemory
-        ///</summary>
+        
         [Test]
         public void GetCustomSettingFromMemoryTest()
         {
@@ -47,9 +43,7 @@ namespace DotSpatial.Controls.Tests
 
         }
 
-        /// <summary>
-        ///A test for GetCustomSettingFromFile
-        ///</summary>
+       
         [Test]
         public void GetCustomSettingFromFileTest()
         {
@@ -74,5 +68,7 @@ namespace DotSpatial.Controls.Tests
 
             File.Delete(path);
         }
+
+	   
     }
 }
