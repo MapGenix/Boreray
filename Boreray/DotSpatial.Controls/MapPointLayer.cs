@@ -365,7 +365,7 @@ namespace DotSpatial.Controls
 
 			if (!DrawnStatesNeeded)
 			{
-				if (DrawWithoutStates(e, indices, g, featureType, minX, dx, maxY, dy, origTransform))
+				if (DrawWithoutStates(e, indices, g, featureType, origTransform))
 					return;
 			}
 			else
@@ -455,7 +455,7 @@ namespace DotSpatial.Controls
 					Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
 				};
 				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
-				DrawPoint(g, bmp);
+				g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 			}
 			else
 			{
@@ -483,9 +483,9 @@ namespace DotSpatial.Controls
 
 		
 
-		private bool DrawWithoutStates(MapArgs e, IEnumerable<int> indices, Graphics g, FeatureType featureType, double minX,
-			double dx, double maxY, double dy, Matrix origTransform)
+		private bool DrawWithoutStates(MapArgs e, IEnumerable<int> indices, Graphics g, FeatureType featureType, Matrix origTransform)
 		{
+			
 			if (Symbology == null || Symbology.Categories.Count == 0)
 				return true;
 			FastDrawnState state = new FastDrawnState(false, Symbology.Categories[0]);
@@ -496,7 +496,7 @@ namespace DotSpatial.Controls
 			if (ps == null)
 				return true;
 			g.SmoothingMode = ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
-			double[] vertices = DataSet.Vertex;
+			
 			foreach (int index in indices)
 			{
 				if (DrawnStates != null && DrawnStates.Length > index)
@@ -508,8 +508,8 @@ namespace DotSpatial.Controls
 				{
 					var pt = new Point
 					{
-						X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
-						Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
+						X = Convert.ToInt32((DataSet.Vertex[index * 2] - e.MinX) * e.Dx),
+						Y = Convert.ToInt32((e.MaxY - DataSet.Vertex[index * 2 + 1]) * e.Dy)
 					};
 					double scaleSize = LineLayerHelper.DefineScale(e, ps);
 					g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
@@ -517,22 +517,21 @@ namespace DotSpatial.Controls
 				}
 				else
 				{
-					DrawMultiPoint(e, index, vertices, minX, dx, maxY, dy, ps, origTransform, g);
+					DrawMultiPoint(e, DataSet.ShapeIndices[index], DataSet.Vertex, ps, origTransform, g);
 				}
 			}
 			return false;
 		}
 
-		private void DrawMultiPoint(MapArgs e, int index, double[] vertices, double minX, double dx, double maxY, double dy,
-			IPointSymbolizer ps, Matrix origTransform, Graphics g)
+		private void DrawMultiPoint(MapArgs e, ShapeRange range, double[] vertices, IPointSymbolizer ps, Matrix origTransform, Graphics g)
 		{
-			ShapeRange range = DataSet.ShapeIndices[index];
+			
 			for (int i = range.StartIndex; i <= range.EndIndex(); i++)
 			{
 				var pt = new Point
 				{
-					X = Convert.ToInt32((vertices[i * 2] - minX) * dx),
-					Y = Convert.ToInt32((maxY - vertices[i * 2 + 1]) * dy)
+					X = Convert.ToInt32((vertices[i * 2] - e.MinX) * e.Dx),
+					Y = Convert.ToInt32((e.MaxY - vertices[i * 2 + 1]) * e.Dy)
 				};
 				double scaleSize = LineLayerHelper.DefineScale(e, ps);
 				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
@@ -547,10 +546,7 @@ namespace DotSpatial.Controls
 		{
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
 			Matrix origTransform = g.Transform;
-			double minX = e.MinX;
-			double maxY = e.MaxY;
-			double dx = e.Dx;
-			double dy = e.Dy;
+			
 			IDictionary<IFeature, IDrawnState> states = DrawingFilter.DrawnStates;
 			if (states == null)
 				return;
@@ -559,7 +555,7 @@ namespace DotSpatial.Controls
 			{
 				foreach (IFeature feature in features)
 				{
-					DrawFeature(e, states, feature, category, g, minX, dx, maxY, dy, origTransform);
+					DrawFeature(e, states, feature, category, g, origTransform);
 				}
 			}
 
@@ -574,8 +570,13 @@ namespace DotSpatial.Controls
 		}
 
 		private static void DrawFeature(MapArgs e, IDictionary<IFeature, IDrawnState> states, IFeature feature, IPointCategory category, Graphics g,
-			double minX, double dx, double maxY, double dy, Matrix origTransform)
+			 Matrix origTransform)
 		{
+			double minX = e.MinX;
+			double maxY = e.MaxY;
+			double dx = e.Dx;
+			double dy = e.Dy;
+
 			if (states.ContainsKey(feature) == false)
 				return;
 			IDrawnState ds = states[feature];
@@ -608,12 +609,6 @@ namespace DotSpatial.Controls
 
 
 		
-
-
-		private static void DrawPoint(Graphics g, Bitmap bmp)
-		{
-			g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
-		}
 		
 
 		#endregion Private  Methods
