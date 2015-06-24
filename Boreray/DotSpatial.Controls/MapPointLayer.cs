@@ -20,6 +20,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+
 using Point = System.Drawing.Point;
 
 namespace DotSpatial.Controls
@@ -29,6 +30,10 @@ namespace DotSpatial.Controls
 	/// </summary>
 	public class MapPointLayer : PointLayer, IMapPointLayer
 	{
+
+		public static Func<IPointCategory, IDrawnState, IPointSymbolizer> CreatePointSymbolizer = PointLayerHelper.CreatePointSymbolizer;
+		public static Func<IDrawnState, bool> ValidateState = PointLayerHelper.Validate;
+		public static Func<IPointCategory, IPointCategory, bool> ValidateCategory = PointLayerHelper.Validate;
 		#region Events
 
 		/// <summary>
@@ -435,7 +440,7 @@ namespace DotSpatial.Controls
 			if (state.Category == null)
 				return;
 			IPointCategory pc = state.Category as IPointCategory;
-			if (!Validate(pc, category))
+			if (!ValidateCategory(pc, category))
 				return;
 			Bitmap bmp = normalSymbol;
 			if (state.Selected)
@@ -599,11 +604,11 @@ namespace DotSpatial.Controls
 				return;
 			IDrawnState ds = states[feature];
 
-			if (!Validate(ds))
+			if (!ValidateState(ds))
 				return;
 
 			IPointCategory pc = ds.SchemeCategory as IPointCategory;
-			if (!Validate(pc, category))
+			if (!ValidateCategory(pc, category))
 				return;
 
 			IPointSymbolizer ps = CreatePointSymbolizer(pc, ds);
@@ -635,31 +640,8 @@ namespace DotSpatial.Controls
 			ps.Draw(g, scaleSize);
 		}
 
-		private static bool Validate(IPointCategory pc, IPointCategory category)
-		{
-			if (pc == null)
-				return false;
-			return pc == category;
-		}
-
-		private static bool Validate(IDrawnState ds)
-		{
-			if (ds == null)
-				return false;
-			if (!ds.IsVisible)
-				return false;
-			return ds.SchemeCategory != null;
-		}
-
-		private static IPointSymbolizer CreatePointSymbolizer(IPointCategory pc, IDrawnState ds)
-		{
-			IPointSymbolizer ps = pc.Symbolizer;
-			if (ds.IsSelected)
-			{
-				ps = pc.SelectionSymbolizer;
-			}
-			return ps;
-		}
+		
+		
 
 		#endregion Private  Methods
 
@@ -706,6 +688,7 @@ namespace DotSpatial.Controls
 		/// <param name="fileName">A string fileName to create a point layer for.</param>
 		/// <param name="progressHandler">Any valid implementation of IProgressHandler for receiving progress messages</param>
 		/// <returns>A GeoPointLayer created from the specified fileName.</returns>
+		[Obsolete("Not Used")]
 		public static new MapPointLayer OpenFile(string fileName, IProgressHandler progressHandler)
 		{
 			ILayer fl = LayerManager.DefaultLayerManager.OpenLayer(fileName, progressHandler);
@@ -718,6 +701,7 @@ namespace DotSpatial.Controls
 		/// </summary>
 		/// <param name="fileName">A string fileName to create a point layer for.</param>
 		/// <returns>A GeoPointLayer created from the specified fileName.</returns>
+		[Obsolete("Not Used")]
 		public static new MapPointLayer OpenFile(string fileName)
 		{
 			IFeatureLayer fl = LayerManager.DefaultLayerManager.OpenVectorLayer(fileName);

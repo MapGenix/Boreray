@@ -20,6 +20,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotSpatial.Tests.Common", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotSpatial.Analysis", "DotSpatial.Analysis\DotSpatial.Analysis.csproj", "{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tristan", "..\..\Tristan\Tristan\Tristan\Tristan.csproj", "{9E73D87B-80AE-4960-B622-AF72ACF459B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TristanLibrary", "..\..\Tristan\Tristan\TristanLibrary\TristanLibrary.csproj", "{52D973ED-DF2E-4775-9529-FADCE4F4E043}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TristanLibraryTest", "..\..\Tristan\Tristan\TristanLibraryTest\TristanLibraryTest.csproj", "{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +66,24 @@ Global
 		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F124E7C5-33CC-4B17-8C45-01E7D2E47DAB}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E73D87B-80AE-4960-B622-AF72ACF459B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E73D87B-80AE-4960-B622-AF72ACF459B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E73D87B-80AE-4960-B622-AF72ACF459B3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E73D87B-80AE-4960-B622-AF72ACF459B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E73D87B-80AE-4960-B622-AF72ACF459B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E73D87B-80AE-4960-B622-AF72ACF459B3}.Release|x86.ActiveCfg = Release|Any CPU
+		{52D973ED-DF2E-4775-9529-FADCE4F4E043}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52D973ED-DF2E-4775-9529-FADCE4F4E043}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52D973ED-DF2E-4775-9529-FADCE4F4E043}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52D973ED-DF2E-4775-9529-FADCE4F4E043}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52D973ED-DF2E-4775-9529-FADCE4F4E043}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52D973ED-DF2E-4775-9529-FADCE4F4E043}.Release|x86.ActiveCfg = Release|Any CPU
+		{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8240BC45-FA33-4F72-B1FE-FDC7F1AF7AD1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
