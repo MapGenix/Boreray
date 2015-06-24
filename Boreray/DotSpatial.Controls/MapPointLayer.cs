@@ -455,7 +455,7 @@ namespace DotSpatial.Controls
 					Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
 				};
 				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
-				DrawPoint(pt, g, bmp);
+				DrawPoint(g, bmp);
 			}
 			else
 			{
@@ -501,7 +501,8 @@ namespace DotSpatial.Controls
 			{
 				if (DrawnStates != null && DrawnStates.Length > index)
 				{
-					if (!DrawnStates[index].Visible) continue;
+					if (!DrawnStates[index].Visible) 
+						continue;
 				}
 				if (featureType == FeatureType.Point)
 				{
@@ -512,7 +513,7 @@ namespace DotSpatial.Controls
 					};
 					double scaleSize = LineLayerHelper.DefineScale(e, ps);
 					g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
-					DrawPoint(pt, scaleSize, ps, g);
+					ps.Draw(g, scaleSize);
 				}
 				else
 				{
@@ -601,18 +602,15 @@ namespace DotSpatial.Controls
 				};
 				double scaleSize = LineLayerHelper.DefineScale(e, ps);
 				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
-				DrawPoint(pt, scaleSize, ps, g);
+				ps.Draw(g, scaleSize);
 			}
 		}
 
 
-		private static void DrawPoint(Point pt, double scaleSize, IPointSymbolizer ps, Graphics g)
-		{
-			ps.Draw(g, scaleSize);
-		}
+		
 
 
-		private static void DrawPoint(Point pt, Graphics g, Bitmap bmp)
+		private static void DrawPoint(Graphics g, Bitmap bmp)
 		{
 			g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 		}
