@@ -11,13 +11,6 @@
 // ANY KIND, either expressed or implied. See the License for the specific language governing rights and
 // limitations under the License.
 //
-// The Original Code is Toolbox.dll for the DotSpatial 4.6/6 ToolManager project
-//
-// The Initial Developer of this Original Code is Brian Marchionni. Created in Nov, 2008.
-//
-// Contributor(s): (Open source contributors should list themselves and their modifications here).
-// ---------------------|------------|--------------------------------------------------------------------
-// Ted Dunsford         | 8/28/2009  | Cleaned up some code using re-sharper
 // ********************************************************************************************************
 
 using DotSpatial.Data;
@@ -1827,16 +1820,7 @@ namespace DotSpatial.Controls
 			graph.SmoothingMode = DrawingQuality;
 			graph.FillRectangle(Brushes.White, 0, 0, _backBuffer.Width, _backBuffer.Height);
 
-			//When the backbuffer is updated this code draws the watermark
-			//if (_showWaterMark)
-			//{
-			//    Bitmap watermark = Images.SpatialLogoPale;
-			//    if ((_backBuffer.Width > watermark.Width) && (_backBuffer.Height > watermark.Height))
-			//    {
-			//        graph.DrawImage(watermark, _backBuffer.Width - watermark.Width - 18, _backBuffer.Height - watermark.Height - 18, watermark.Width, watermark.Height);
-			//    }
-			//}
-
+			
 			//Check if there are any model elements to draw
 			foreach (ModelElement me in _modelElements)
 			{

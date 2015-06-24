@@ -10,15 +10,6 @@
 // ANY KIND, either expressed or implied. See the License for the specific language governing rights and
 // limitations under the License.
 //
-// The Original Code is from MapWindow.dll version 6.0
-//
-// The Initial Developer of this Original Code is Ted Dunsford. Created 7/25/2008 9:37:01 AM
-//
-// Contributor(s): (Open source contributors should list themselves and their modifications here).
-//
-// Name               |   Date             |         Comments
-//--------------------|--------------------|--------------------------------------------------------
-// Jiri Kadlec        |  2/18/2010         |  Added zoom out button and custom mouse cursors
 // ********************************************************************************************************
 using System.ComponentModel;
 using System.Drawing;
