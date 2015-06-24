@@ -18,6 +18,15 @@ namespace DotSpatial.Controls.Extensions
 			return ps;
 		}
 
+		public static IPointSymbolizer CreatePointSymbolizer(FastDrawnState state)
+		{
+			IPointCategory pc = state.Category as IPointCategory;
+			IPointSymbolizer ps = null;
+			if (pc != null && pc.Symbolizer != null)
+				ps = pc.Symbolizer;
+			return ps;
+		}
+
 		public static bool Validate(IPointCategory pc, IPointCategory category)
 		{
 			if (pc == null)

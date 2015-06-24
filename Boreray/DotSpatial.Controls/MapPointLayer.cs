@@ -32,6 +32,7 @@ namespace DotSpatial.Controls
 	{
 
 		public static Func<IPointCategory, IDrawnState, IPointSymbolizer> CreatePointSymbolizer = PointLayerHelper.CreatePointSymbolizer;
+		public static Func<FastDrawnState, IPointSymbolizer> CreateSymbolizerFastDrawn = PointLayerHelper.CreatePointSymbolizer;
 		public static Func<IDrawnState, bool> ValidateState = PointLayerHelper.Validate;
 		public static Func<IPointCategory, IPointCategory, bool> ValidateCategory = PointLayerHelper.Validate;
 		public static Func<MapArgs, Coordinate, Point> CreatePoint = PointLayerHelper.CreatePoint;
@@ -116,50 +117,65 @@ namespace DotSpatial.Controls
 			List<Rectangle> clipRects = args.ProjToPixel(regions);
 			if (EditMode)
 			{
-				List<IFeature> drawList = new List<IFeature>();
-				foreach (Extent region in regions)
-				{
-					if (region != null)
-					{
-						// Use union to prevent duplicates.  No sense in drawing more than we have to.
-						drawList = drawList.Union(DataSet.Select(region)).ToList();
-					}
-				}
-				DrawFeatures(args, drawList, clipRects, true);
+				var drawList = CreateDrawList(regions);
+				DrawFeatures(args, drawList, clipRects);
 			}
 			else
 			{
 				List<int> drawList = new List<int>();
-				double[] verts = DataSet.Vertex;
-
+				
 				if (DataSet.FeatureType == FeatureType.Point)
 				{
-					for (int shp = 0; shp < verts.Length / 2; shp++)
-					{
-						foreach (Extent extent in regions)
-						{
-							if (extent.Intersects(verts[shp * 2], verts[shp * 2 + 1]))
-							{
-								drawList.Add(shp);
-							}
-						}
-					}
+					CreateDrawListFromVerts(regions, DataSet.Vertex, drawList);
 				}
 				else
 				{
-					List<ShapeRange> shapes = DataSet.ShapeIndices;
-					for (int shp = 0; shp < shapes.Count; shp++)
+					CreateDrawListFromShape(regions, drawList);
+				}
+				DrawFeatures(args, drawList, clipRects);
+			}
+		}
+
+		private void CreateDrawListFromShape(List<Extent> regions, List<int> drawList)
+		{
+			List<ShapeRange> shapes = DataSet.ShapeIndices;
+			for (int shp = 0; shp < shapes.Count; shp++)
+			{
+				foreach (Extent region in regions)
+				{
+					if (!shapes[shp].Extent.Intersects(region)) continue;
+					drawList.Add(shp);
+					break;
+				}
+			}
+		}
+
+		private static void CreateDrawListFromVerts(List<Extent> regions, double[] verts, List<int> drawList)
+		{
+			for (int shp = 0; shp < verts.Length/2; shp++)
+			{
+				foreach (Extent extent in regions)
+				{
+					if (extent.Intersects(verts[shp*2], verts[shp*2 + 1]))
 					{
-						foreach (Extent region in regions)
-						{
-							if (!shapes[shp].Extent.Intersects(region)) continue;
-							drawList.Add(shp);
-							break;
-						}
+						drawList.Add(shp);
 					}
 				}
-				DrawFeatures(args, drawList, clipRects, true);
 			}
+		}
+
+		private List<IFeature> CreateDrawList(List<Extent> regions)
+		{
+			List<IFeature> drawList = new List<IFeature>();
+			foreach (Extent region in regions)
+			{
+				if (region != null)
+				{
+					// Use union to prevent duplicates.  No sense in drawing more than we have to.
+					drawList = drawList.Union(DataSet.Select(region)).ToList();
+				}
+			}
+			return drawList;
 		}
 
 		/// <summary>
@@ -218,9 +234,9 @@ namespace DotSpatial.Controls
 		/// <param name="features">The features that should be drawn.</param>
 		/// <param name="clipRectangles">If an entire chunk is drawn and an update is specified, this clarifies the changed rectangles.</param>
 		/// <param name="useChunks">Boolean, if true, this will refresh the buffer in chunks.</param>
-		public virtual void DrawFeatures(MapArgs args, List<IFeature> features, List<Rectangle> clipRectangles, bool useChunks)
+		public virtual void DrawFeatures(MapArgs args, List<IFeature> features, List<Rectangle> clipRectangles)
 		{
-			if (useChunks == false || features.Count < ChunkSize)
+			if (features.Count < ChunkSize)
 			{
 				DrawFeatures(args, features);
 				return;
@@ -231,7 +247,8 @@ namespace DotSpatial.Controls
 			for (int chunk = 0; chunk < numChunks; chunk++)
 			{
 				int groupSize = ChunkSize;
-				if (chunk == numChunks - 1) groupSize = count - chunk * ChunkSize;
+				if (chunk == numChunks - 1) 
+					groupSize = count - chunk * ChunkSize;
 				List<IFeature> subset = features.GetRange(chunk * ChunkSize, groupSize);
 				DrawFeatures(args, subset);
 				if (numChunks <= 0 || chunk >= numChunks - 1) continue;
@@ -241,39 +258,7 @@ namespace DotSpatial.Controls
 			}
 		}
 
-		/// <summary>
-		/// If useChunks is true, then this method
-		/// </summary>
-		/// <param name="args">The GeoArgs that control how these features should be drawn.</param>
-		/// <param name="indices">The features that should be drawn.</param>
-		/// <param name="clipRectangles">If an entire chunk is drawn and an update is specified, this clarifies the changed rectangles.</param>
-		/// <param name="useChunks">Boolean, if true, this will refresh the buffer in chunks.</param>
-		public virtual void DrawFeatures(MapArgs args, List<int> indices, List<Rectangle> clipRectangles, bool useChunks)
-		{
-			if (useChunks == false)
-			{
-				DrawFeatures(args, indices);
-				return;
-			}
-
-			int count = indices.Count;
-			int numChunks = (int)Math.Ceiling(count / (double)ChunkSize);
-
-			for (int chunk = 0; chunk < numChunks; chunk++)
-			{
-				int numFeatures = ChunkSize;
-				if (chunk == numChunks - 1) numFeatures = indices.Count - (chunk * ChunkSize);
-				DrawFeatures(args, indices.GetRange(chunk * ChunkSize, numFeatures));
-
-				if (numChunks > 0 && chunk < numChunks - 1)
-				{
-					// FinishDrawing();
-					OnBufferChanged(clipRectangles);
-					Application.DoEvents();
-					// this.StartDrawing();
-				}
-			}
-		}
+		
 
 		/// <summary>
 		/// Indicates that the drawing process has been finalized and swaps the back buffer
@@ -356,27 +341,7 @@ namespace DotSpatial.Controls
 
 		#region Private  Methods
 
-		private void DrawFeatures(MapArgs e, IEnumerable<int> indices)
-		{
-			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
-			Matrix origTransform = g.Transform;
-			
-			if (!DrawnStatesNeeded)
-			{
-				if (DrawWithoutStates(e, indices, g, DataSet.FeatureType, origTransform))
-					return;
-			}
-			else
-			{
-				DrawStates(e, indices, DataSet.FeatureType, origTransform, g);
-			}
-
-			if (e.Device == null)
-				g.Dispose();
-			else 
-				g.Transform = origTransform;
-		}
-
+		
 		private void DrawStates(MapArgs e, IEnumerable<int> indices, FeatureType featureType, Matrix origTransform, Graphics g)
 		{
 			foreach (IPointCategory category in Symbology.Categories)
@@ -475,13 +440,10 @@ namespace DotSpatial.Controls
 			if (Symbology == null || Symbology.Categories.Count == 0)
 				return true;
 			FastDrawnState state = new FastDrawnState(false, Symbology.Categories[0]);
-			IPointCategory pc = state.Category as IPointCategory;
-			IPointSymbolizer ps = null;
-			if (pc != null && pc.Symbolizer != null)
-				ps = pc.Symbolizer;
+			IPointSymbolizer ps = CreateSymbolizerFastDrawn(state);
 			if (ps == null)
 				return true;
-			g.SmoothingMode = ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+			g.SmoothingMode = GetSmoothingMode(ps);
 			
 			foreach (int index in indices)
 			{
@@ -492,10 +454,7 @@ namespace DotSpatial.Controls
 				}
 				if (featureType == FeatureType.Point)
 				{
-					var pt = CreatePoint(e, new Coordinate(DataSet.Vertex[index * 2], DataSet.Vertex[index * 2 + 1]));
-					double scaleSize = DefineScale(e, ps);
-					g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
-					ps.Draw(g, scaleSize);
+					DrawCoordinate(e, ps, g, origTransform, new Coordinate(DataSet.Vertex[index * 2], DataSet.Vertex[index * 2 + 1]));
 				}
 				else
 				{
@@ -505,19 +464,68 @@ namespace DotSpatial.Controls
 			return false;
 		}
 
+		
+
 		private void DrawMultiPoint(MapArgs e, ShapeRange range, double[] vertices, IPointSymbolizer ps, Matrix origTransform, Graphics g)
 		{
 			
 			for (int i = range.StartIndex; i <= range.EndIndex(); i++)
 			{
-				Point pt = CreatePoint(e, new Coordinate(vertices[i * 2], vertices[i * 2 + 1])); 
-				double scaleSize = DefineScale(e, ps);
-				g.Transform = CreateTranslateMatrix(origTransform, pt);
-				ps.Draw(g, scaleSize);
+				DrawCoordinate(e, ps, g, origTransform, new Coordinate(vertices[i * 2], vertices[i * 2 + 1]));
 			}
 		}
 
-		
+
+		/// <summary>
+		/// If useChunks is true, then this method
+		/// </summary>
+		/// <param name="args">The GeoArgs that control how these features should be drawn.</param>
+		/// <param name="indices">The features that should be drawn.</param>
+		/// <param name="clipRectangles">If an entire chunk is drawn and an update is specified, this clarifies the changed rectangles.</param>
+		/// <param name="useChunks">Boolean, if true, this will refresh the buffer in chunks.</param>
+		public virtual void DrawFeatures(MapArgs args, List<int> indices, List<Rectangle> clipRectangles)
+		{
+			
+			int numChunks = (int)Math.Ceiling(indices.Count / (double)ChunkSize);
+
+			for (int chunk = 0; chunk < numChunks; chunk++)
+			{
+				int numFeatures = ChunkSize;
+				if (chunk == numChunks - 1) 
+					numFeatures = indices.Count - (chunk * ChunkSize);
+				DrawFeatures(args, indices.GetRange(chunk * ChunkSize, numFeatures));
+
+				if (numChunks > 0 && chunk < numChunks - 1)
+				{
+					
+					OnBufferChanged(clipRectangles);
+					Application.DoEvents();
+				}
+			}
+		}
+
+		private void DrawFeatures(MapArgs e, IEnumerable<int> indices)
+		{
+			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
+			Matrix origTransform = g.Transform;
+
+			if (!DrawnStatesNeeded)
+			{
+				if (DrawWithoutStates(e, indices, g, DataSet.FeatureType, origTransform))
+					return;
+			}
+			else
+			{
+				DrawStates(e, indices, DataSet.FeatureType, origTransform, g);
+			}
+
+			if (e.Device == null)
+				g.Dispose();
+			else
+				g.Transform = origTransform;
+		}
+
+
 		private void DrawFeatures(MapArgs e, IEnumerable<IFeature> features)
 		{
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
@@ -546,7 +554,7 @@ namespace DotSpatial.Controls
 					if (ps == null)
 						return;
 
-					g.SmoothingMode = ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+					g.SmoothingMode = GetSmoothingMode(ps);
 					DrawFeature(e, feature, ps, g, origTransform);
 				}
 			}
@@ -564,15 +572,27 @@ namespace DotSpatial.Controls
 		private static void DrawFeature(MapArgs e, IFeature feature, IPointSymbolizer ps, Graphics g,
 			 Matrix origTransform)
 		{
-			
+
 			foreach (Coordinate c in feature.Coordinates)
 			{
-				Point pt = CreatePoint(e, c);
-				double scaleSize =DefineScale(e, ps);
-				g.Transform = CreateTranslateMatrix(origTransform, pt);
-				ps.Draw(g, scaleSize);
+				DrawCoordinate(e, ps, g, origTransform, c);
 			}
 		}
+
+		private static void DrawCoordinate(MapArgs e, IPointSymbolizer ps, Graphics g, Matrix origTransform, Coordinate c)
+		{
+			Point pt = CreatePoint(e, c);
+			double scaleSize = DefineScale(e, ps);
+			g.Transform = CreateTranslateMatrix(origTransform, pt);
+			ps.Draw(g, scaleSize);
+		}
+
+		private static SmoothingMode GetSmoothingMode(IFeatureSymbolizer ps)
+		{
+			return ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+		}
+
+		
 
 		
 
