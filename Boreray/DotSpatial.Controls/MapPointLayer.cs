@@ -34,6 +34,10 @@ namespace DotSpatial.Controls
 		public static Func<IPointCategory, IDrawnState, IPointSymbolizer> CreatePointSymbolizer = PointLayerHelper.CreatePointSymbolizer;
 		public static Func<IDrawnState, bool> ValidateState = PointLayerHelper.Validate;
 		public static Func<IPointCategory, IPointCategory, bool> ValidateCategory = PointLayerHelper.Validate;
+		public static Func<MapArgs, Coordinate, Point> CreatePoint = PointLayerHelper.CreatePoint;
+		public static Func<MapArgs, IPointSymbolizer, double> DefineScale = LineLayerHelper.DefineScale;
+		public static Func<Matrix, Point, Matrix> CreateTranslateMatrix = PointLayerHelper.CreateTranslateMatrix ;
+
 		#region Events
 
 		/// <summary>
@@ -356,41 +360,33 @@ namespace DotSpatial.Controls
 		{
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
 			Matrix origTransform = g.Transform;
-			FeatureType featureType = DataSet.FeatureType;
-
-			double minX = e.MinX;
-			double maxY = e.MaxY;
-			double dx = e.Dx;
-			double dy = e.Dy;
-
+			
 			if (!DrawnStatesNeeded)
 			{
-				if (DrawWithoutStates(e, indices, g, featureType, origTransform))
+				if (DrawWithoutStates(e, indices, g, DataSet.FeatureType, origTransform))
 					return;
 			}
 			else
 			{
-				DrawStates(e, indices, featureType, minX, dx, maxY, dy, origTransform, g);
+				DrawStates(e, indices, DataSet.FeatureType, origTransform, g);
 			}
 
 			if (e.Device == null)
 				g.Dispose();
-			else g.Transform = origTransform;
+			else 
+				g.Transform = origTransform;
 		}
 
-		private void DrawStates(MapArgs e, IEnumerable<int> indices, FeatureType featureType, double minX, double dx, double maxY,
-			double dy, Matrix origTransform, Graphics g)
+		private void DrawStates(MapArgs e, IEnumerable<int> indices, FeatureType featureType, Matrix origTransform, Graphics g)
 		{
-			FastDrawnState[] states = DrawnStates;
-			double[] vertices = DataSet.Vertex;
 			foreach (IPointCategory category in Symbology.Categories)
 			{
-				DrawCategory(e, indices, category, states, featureType, vertices, minX, dx, maxY, dy, origTransform, g);
+				DrawCategory(e, indices, category, DrawnStates, featureType, DataSet.Vertex, origTransform, g);
 			}
 		}
 
 		private void DrawCategory(MapArgs e, IEnumerable<int> indices, IPointCategory category, FastDrawnState[] states,
-			FeatureType featureType, double[] vertices, double minX, double dx, double maxY, double dy, Matrix origTransform,
+			FeatureType featureType, double[] vertices, Matrix origTransform,
 			Graphics g)
 		{
 			if (category.Symbolizer == null) return;
@@ -425,13 +421,13 @@ namespace DotSpatial.Controls
 
 			foreach (int index in indices)
 			{
-				DrawIndex(states, index, category, normalSymbol, selectedSymbol, featureType, vertices, minX, dx, maxY, dy,
+				DrawIndex(e, states, index, category, normalSymbol, selectedSymbol, featureType, vertices,
 					origTransform, g);
 			}
 		}
 
-		private void DrawIndex(FastDrawnState[] states, int index, IPointCategory category, Bitmap normalSymbol,
-			Bitmap selectedSymbol, FeatureType featureType, double[] vertices, double minX, double dx, double maxY, double dy,
+		private void DrawIndex(MapArgs e, FastDrawnState[] states, int index, IPointCategory category, Bitmap normalSymbol,
+			Bitmap selectedSymbol, FeatureType featureType, double[] vertices, 
 			Matrix origTransform, Graphics g)
 		{
 			FastDrawnState state = states[index];
@@ -449,34 +445,24 @@ namespace DotSpatial.Controls
 			}
 			if (featureType == FeatureType.Point)
 			{
-				var pt = new Point
-				{
-					X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
-					Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
-				};
-				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
+				var pt = CreatePoint(e, new Coordinate(vertices[index * 2], vertices[index * 2 + 1]));
+				g.Transform = CreateTranslateMatrix(origTransform, pt);
 				g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 			}
 			else
 			{
-				DrawMultiPoint(index, vertices, minX, dx, maxY, dy, origTransform, g, bmp);
+				DrawMultiPoint(DataSet.ShapeIndices[index], vertices, e, origTransform, g, bmp);
 			}
 		}
 
-		private void DrawMultiPoint(int index, double[] vertices, double minX, double dx, double maxY, double dy,
+		private void DrawMultiPoint(ShapeRange range, double[] vertices, MapArgs e,
 			Matrix origTransform, Graphics g, Bitmap bmp)
 		{
-			ShapeRange range = DataSet.ShapeIndices[index];
+			
 			for (int i = range.StartIndex; i <= range.EndIndex(); i++)
 			{
-				var pt = new Point
-				{
-					X = Convert.ToInt32((vertices[i * 2] - minX) * dx),
-					Y = Convert.ToInt32((maxY - vertices[i * 2 + 1]) * dy)
-				};
-
-				
-				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt); 
+				var pt = CreatePoint(e, new Coordinate(vertices[i * 2], vertices[i * 2 + 1]));
+				g.Transform = CreateTranslateMatrix(origTransform, pt); 
 				g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 			}
 		}
@@ -506,12 +492,8 @@ namespace DotSpatial.Controls
 				}
 				if (featureType == FeatureType.Point)
 				{
-					var pt = new Point
-					{
-						X = Convert.ToInt32((DataSet.Vertex[index * 2] - e.MinX) * e.Dx),
-						Y = Convert.ToInt32((e.MaxY - DataSet.Vertex[index * 2 + 1]) * e.Dy)
-					};
-					double scaleSize = LineLayerHelper.DefineScale(e, ps);
+					var pt = CreatePoint(e, new Coordinate(DataSet.Vertex[index * 2], DataSet.Vertex[index * 2 + 1]));
+					double scaleSize = DefineScale(e, ps);
 					g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
 					ps.Draw(g, scaleSize);
 				}
@@ -528,20 +510,14 @@ namespace DotSpatial.Controls
 			
 			for (int i = range.StartIndex; i <= range.EndIndex(); i++)
 			{
-				var pt = new Point
-				{
-					X = Convert.ToInt32((vertices[i * 2] - e.MinX) * e.Dx),
-					Y = Convert.ToInt32((e.MaxY - vertices[i * 2 + 1]) * e.Dy)
-				};
-				double scaleSize = LineLayerHelper.DefineScale(e, ps);
-				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
+				Point pt = CreatePoint(e, new Coordinate(vertices[i * 2], vertices[i * 2 + 1])); 
+				double scaleSize = DefineScale(e, ps);
+				g.Transform = CreateTranslateMatrix(origTransform, pt);
 				ps.Draw(g, scaleSize);
 			}
 		}
 
 		
-
-		// This draws the individual point features
 		private void DrawFeatures(MapArgs e, IEnumerable<IFeature> features)
 		{
 			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
@@ -555,7 +531,23 @@ namespace DotSpatial.Controls
 			{
 				foreach (IFeature feature in features)
 				{
-					DrawFeature(e, states, feature, category, g, origTransform);
+					if (states.ContainsKey(feature) == false)
+						return;
+					IDrawnState ds = states[feature];
+
+					if (!ValidateState(ds))
+						return;
+
+					IPointCategory pc = ds.SchemeCategory as IPointCategory;
+					if (!ValidateCategory(pc, category))
+						return;
+
+					IPointSymbolizer ps = CreatePointSymbolizer(pc, ds);
+					if (ps == null)
+						return;
+
+					g.SmoothingMode = ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+					DrawFeature(e, feature, ps, g, origTransform);
 				}
 			}
 
@@ -569,46 +561,19 @@ namespace DotSpatial.Controls
 			}
 		}
 
-		private static void DrawFeature(MapArgs e, IDictionary<IFeature, IDrawnState> states, IFeature feature, IPointCategory category, Graphics g,
+		private static void DrawFeature(MapArgs e, IFeature feature, IPointSymbolizer ps, Graphics g,
 			 Matrix origTransform)
 		{
-			double minX = e.MinX;
-			double maxY = e.MaxY;
-			double dx = e.Dx;
-			double dy = e.Dy;
-
-			if (states.ContainsKey(feature) == false)
-				return;
-			IDrawnState ds = states[feature];
-
-			if (!ValidateState(ds))
-				return;
-
-			IPointCategory pc = ds.SchemeCategory as IPointCategory;
-			if (!ValidateCategory(pc, category))
-				return;
-
-			IPointSymbolizer ps = CreatePointSymbolizer(pc, ds);
-			if (ps == null)
-				return;
-
-			g.SmoothingMode = ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
-
+			
 			foreach (Coordinate c in feature.Coordinates)
 			{
-				Point pt = new Point
-				{
-					X = Convert.ToInt32((c.X - minX) * dx),
-					Y = Convert.ToInt32((maxY - c.Y) * dy)
-				};
-				double scaleSize = LineLayerHelper.DefineScale(e, ps);
-				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
+				Point pt = CreatePoint(e, c);
+				double scaleSize =DefineScale(e, ps);
+				g.Transform = CreateTranslateMatrix(origTransform, pt);
 				ps.Draw(g, scaleSize);
 			}
 		}
 
-
-		
 		
 
 		#endregion Private  Methods

@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
 using System.Drawing.Drawing2D;
 using DotSpatial.Symbology;
+using DotSpatial.Topology;
+using Point = System.Drawing.Point;
 
 namespace DotSpatial.Controls.Extensions
 {
@@ -37,6 +39,15 @@ namespace DotSpatial.Controls.Extensions
 			Matrix shift = origTransform.Clone();
 			shift.Translate(pt.X, pt.Y);
 			return shift;
+		}
+
+		public static Point CreatePoint(MapArgs e, Coordinate c)
+		{
+			return new Point
+			{
+				X = Convert.ToInt32((c.X - e.MinX) * e.Dx),
+				Y = Convert.ToInt32((e.MaxY - c.Y) * e.Dy)
+			};
 		}
 
 	}
