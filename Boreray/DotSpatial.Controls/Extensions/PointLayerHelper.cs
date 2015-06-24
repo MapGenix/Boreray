@@ -1,4 +1,6 @@
-﻿using DotSpatial.Symbology;
+﻿using System.Drawing;
+using System.Drawing.Drawing2D;
+using DotSpatial.Symbology;
 
 namespace DotSpatial.Controls.Extensions
 {
@@ -28,6 +30,13 @@ namespace DotSpatial.Controls.Extensions
 			if (!ds.IsVisible)
 				return false;
 			return ds.SchemeCategory != null;
+		}
+
+		public static Matrix CreateTranslateMatrix(Matrix origTransform, Point pt)
+		{
+			Matrix shift = origTransform.Clone();
+			shift.Translate(pt.X, pt.Y);
+			return shift;
 		}
 
 	}

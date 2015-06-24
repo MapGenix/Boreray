@@ -449,7 +449,13 @@ namespace DotSpatial.Controls
 			}
 			if (featureType == FeatureType.Point)
 			{
-				DrawPoint(vertices, index, minX, dx, maxY, dy, origTransform, g, bmp);
+				var pt = new Point
+				{
+					X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
+					Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
+				};
+				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
+				DrawPoint(pt, g, bmp);
 			}
 			else
 			{
@@ -469,28 +475,13 @@ namespace DotSpatial.Controls
 					Y = Convert.ToInt32((maxY - vertices[i * 2 + 1]) * dy)
 				};
 
-				Matrix shift = origTransform.Clone();
-				shift.Translate(pt.X, pt.Y);
-				g.Transform = shift;
+				
+				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt); 
 				g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
 			}
 		}
 
-		private static void DrawPoint(double[] vertices, int index, double minX, double dx, double maxY, double dy,
-			Matrix origTransform, Graphics g, Bitmap bmp)
-		{
-			var pt = new Point
-			{
-				X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
-				Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
-			};
-
-			Matrix shift = origTransform.Clone();
-			shift.Translate(pt.X, pt.Y);
-			g.Transform = shift;
-
-			g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
-		}
+		
 
 		private bool DrawWithoutStates(MapArgs e, IEnumerable<int> indices, Graphics g, FeatureType featureType, double minX,
 			double dx, double maxY, double dy, Matrix origTransform)
@@ -514,7 +505,14 @@ namespace DotSpatial.Controls
 				}
 				if (featureType == FeatureType.Point)
 				{
-					DrawPoint(e, vertices, index, minX, dx, maxY, dy, ps, origTransform, g);
+					var pt = new Point
+					{
+						X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
+						Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
+					};
+					double scaleSize = LineLayerHelper.DefineScale(e, ps);
+					g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
+					DrawPoint(pt, scaleSize, ps, g);
 				}
 				else
 				{
@@ -535,36 +533,13 @@ namespace DotSpatial.Controls
 					X = Convert.ToInt32((vertices[i * 2] - minX) * dx),
 					Y = Convert.ToInt32((maxY - vertices[i * 2 + 1]) * dy)
 				};
-				double scaleSize = 1;
-				if (ps.ScaleMode == ScaleMode.Geographic)
-				{
-					scaleSize = e.ImageRectangle.Width / e.GeographicExtents.Width;
-				}
-				Matrix shift = origTransform.Clone();
-				shift.Translate(pt.X, pt.Y);
-				g.Transform = shift;
+				double scaleSize = LineLayerHelper.DefineScale(e, ps);
+				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
 				ps.Draw(g, scaleSize);
 			}
 		}
 
-		private static void DrawPoint(MapArgs e, double[] vertices, int index, double minX, double dx, double maxY, double dy,
-			IPointSymbolizer ps, Matrix origTransform, Graphics g)
-		{
-			var pt = new Point
-			{
-				X = Convert.ToInt32((vertices[index * 2] - minX) * dx),
-				Y = Convert.ToInt32((maxY - vertices[index * 2 + 1]) * dy)
-			};
-			double scaleSize = 1;
-			if (ps.ScaleMode == ScaleMode.Geographic)
-			{
-				scaleSize = e.ImageRectangle.Width / e.GeographicExtents.Width;
-			}
-			Matrix shift = origTransform.Clone();
-			shift.Translate(pt.X, pt.Y);
-			g.Transform = shift;
-			ps.Draw(g, scaleSize);
-		}
+		
 
 		// This draws the individual point features
 		private void DrawFeatures(MapArgs e, IEnumerable<IFeature> features)
@@ -619,28 +594,28 @@ namespace DotSpatial.Controls
 
 			foreach (Coordinate c in feature.Coordinates)
 			{
-				DrawPoint(e, c, minX, dx, maxY, dy, ps, origTransform, g);
+				Point pt = new Point
+				{
+					X = Convert.ToInt32((c.X - minX) * dx),
+					Y = Convert.ToInt32((maxY - c.Y) * dy)
+				};
+				double scaleSize = LineLayerHelper.DefineScale(e, ps);
+				g.Transform = PointLayerHelper.CreateTranslateMatrix(origTransform, pt);
+				DrawPoint(pt, scaleSize, ps, g);
 			}
 		}
 
-		private static void DrawPoint(MapArgs e, Coordinate c, double minX, double dx, double maxY, double dy,
-			IPointSymbolizer ps, Matrix origTransform, Graphics g)
+
+		private static void DrawPoint(Point pt, double scaleSize, IPointSymbolizer ps, Graphics g)
 		{
-			Point pt = new Point
-			{
-				X = Convert.ToInt32((c.X - minX) * dx),
-				Y = Convert.ToInt32((maxY - c.Y) * dy)
-			};
-
-			double scaleSize = LineLayerHelper.DefineScale(e, ps);
-
-			Matrix shift = origTransform.Clone();
-			shift.Translate(pt.X, pt.Y);
-			g.Transform = shift;
 			ps.Draw(g, scaleSize);
 		}
 
-		
+
+		private static void DrawPoint(Point pt, Graphics g, Bitmap bmp)
+		{
+			g.DrawImageUnscaled(bmp, -bmp.Width / 2, -bmp.Height / 2);
+		}
 		
 
 		#endregion Private  Methods
