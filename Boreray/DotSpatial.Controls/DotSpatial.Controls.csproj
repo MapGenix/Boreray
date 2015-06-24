@@ -118,12 +118,15 @@
     <Compile Include="Extensions\GraphicsHelper.cs" />
     <Compile Include="Extensions\LabelLayerHelper.cs" />
     <Compile Include="Extensions\LineLayerHelper.cs" />
+    <Compile Include="Extensions\Map\Loader.cs" />
     <Compile Include="Extensions\PointLayerHelper.cs" />
     <Compile Include="FeatureIdentifier.Designer.cs">
       <DependentUpon>FeatureIdentifier.cs</DependentUpon>
     </Compile>
     <Compile Include="Header\ProgressStatusPanel.cs" />
     <Compile Include="IFeatureLayerExtensions.cs" />
+    <Compile Include="Extensions\Map\LimitedStack.cs" />
+    <Compile Include="Extensions\Map\MapChangedEventArgs.cs" />
     <Compile Include="PackageManager.cs" />
     <Compile Include="ShowExtensionsDialog.cs" />
     <Compile Include="AppManager.cs">

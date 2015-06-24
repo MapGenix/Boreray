@@ -10,15 +10,6 @@
 // ANY KIND, either expressed or implied. See the License for the specific language governing rights and
 // limitations under the License.
 //
-// The Original Code is from MapWindow.dll version 6.0
-//
-// The Initial Developer of this Original Code is Ted Dunsford. Created 8/19/2008 9:37:01 AM
-//
-// Contributor(s): (Open source contributors should list themselves and their modifications here).
-// Kyle Ellison 11/02/2010 Draw map background using map control BackColor
-// Kyle Ellison 01/07/2010 Made Initialize and InitializeLabels both public virtual to enable labels
-//                         in custom Map Layers
-//
 // ********************************************************************************************************
 
 using DotSpatial.Data;
@@ -288,9 +279,6 @@ namespace DotSpatial.Controls
 		public virtual void ResetBuffer()
 		{
 			_backBuffer = null;
-			// reset the view rectangle to represent the same region
-			//_view = _extendBuffer ? new Rectangle(_width / 3, _height / 3, _width / 3, _height / 3) : new Rectangle(0, 0, _width, _height);
-
 			Initialize();
 		}
 
@@ -400,8 +388,7 @@ namespace DotSpatial.Controls
 		{
 			get
 			{
-				// leave cast for 3.5 compatibility
-				return _layers.Cast<ILegendItem>();
+				return _layers;
 			}
 		}
 
@@ -1434,41 +1421,5 @@ namespace DotSpatial.Controls
 		}
 
 		#endregion IMapFrame Members
-	}
-
-	internal class LimitedStack<T>
-	{
-		public readonly int Limit;
-		private readonly List<T> _stack;
-
-		public LimitedStack(int limit = 32)
-		{
-			Limit = limit;
-			_stack = new List<T>(limit);
-		}
-
-		public void Push(T item)
-		{
-			if (_stack.Count == Limit) _stack.RemoveAt(0);
-			_stack.Add(item);
-		}
-
-		public T Peek()
-		{
-			if (_stack.Count == 0) return default(T);
-			return _stack[_stack.Count - 1];
-		}
-
-		public T Pop()
-		{
-			var item = _stack[_stack.Count - 1];
-			_stack.RemoveAt(_stack.Count - 1);
-			return item;
-		}
-
-		public int Count
-		{
-			get { return _stack.Count; }
-		}
 	}
 }

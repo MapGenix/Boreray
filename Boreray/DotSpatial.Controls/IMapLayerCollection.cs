@@ -10,12 +10,6 @@
 // ANY KIND, either expressed or implied. See the License for the specific language governing rights and
 // limitations under the License.
 //
-// The Original Code is from MapWindow.dll version 6.0
-//
-// The Initial Developer of this Original Code is Ted Dunsford. Created 8/19/2008 10:26:38 AM
-//
-// Contributor(s): (Open source contributors should list themselves and their modifications here).
-//
 // ********************************************************************************************************
 
 using DotSpatial.Data;
@@ -29,17 +23,14 @@ namespace DotSpatial.Controls
 	/// </summary>
 	public interface IMapLayerCollection : ILayerEventList<IMapLayer>
 	{
-		#region Events
-
+		
 		/// <summary>
 		/// Occurs when a rectangular region of the buffer for any of the layers in this collection
 		/// should be updated.
 		/// </summary>
 		event EventHandler<ClipArgs> BufferChanged;
 
-		#endregion Events
-
-		#region Methods
+		
 
 		/// <summary>
 		/// Adds the specified fileName to the map as a new layer.
@@ -81,10 +72,7 @@ namespace DotSpatial.Controls
 		/// <returns>An interface to the newly created MapImageLayer</returns>
 		IMapImageLayer Add(IImageData image);
 
-		#endregion Methods
-
-		#region Properties
-
+		
 		/// <summary>
 		/// Gets or sets the map frame that this belongs to.  These are designed to only work with one map frame at a time.
 		/// </summary>
@@ -130,6 +118,6 @@ namespace DotSpatial.Controls
 		/// <returns>The base name modified by a number making it unique in the collection</returns>
 		string UnusedName(string baseName);
 
-		#endregion Properties
+		
 	}
 }

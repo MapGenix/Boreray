@@ -6,6 +6,7 @@ using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using DotSpatial.Controls.Extensions.Map;
 using Msg = DotSpatial.Controls.MessageStrings;
 
 namespace DotSpatial.Controls

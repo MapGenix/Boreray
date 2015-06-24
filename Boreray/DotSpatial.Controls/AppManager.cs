@@ -10,18 +10,6 @@
 // ANY KIND, either expressed or implied. See the License for the specific language governing rights and
 // limitations under the License.
 //
-// The Original Code is from MapWindow.dll version 6.0
-//
-// The Initial Developer of this Original Code is Ted Dunsford. Created 3/26/2009 6:17:22 PM
-//
-// Contributor(s): (Open source contributors should list themselves and their modifications here).
-//
-// Name               |   Date             |         Comments
-//--------------------|--------------------|--------------------------------------------------------
-// Jiri Kadlec        | 03/08/2010         |  Added the PanelManager to work with tabs and panels
-// Yang Cao           | 05/16/2011         |  Added the IHeaderControl to work with standard toolbar and ribbon control
-// Eric Hullinger     | 01/02/2014         |  Made changes so that the progress bar on the splash screen will update properly
-// Jacob Gillespie    | 03/31/2014         |  Plugins can now be stored in and loaded from one extensions/plugins directory.
 // ********************************************************************************************************
 
 using DotSpatial.Controls.DefaultRequiredImports;
@@ -36,13 +24,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
+
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using DotSpatial.Controls.Extensions.Map;
 
 namespace DotSpatial.Controls
 {
@@ -416,13 +405,7 @@ namespace DotSpatial.Controls
 				splashScreen = null;
 			}
 
-			// Set the DefaultDataManager progress handler.
-			// It doesn’t seem like the solution is as simple as adding the
-			//        [Import(typeof(IProgressHandler), AllowDefault = true)]
-			// Attribute to the ProgressHandler property on DataManager, because the ProgressHandler we are typically
-			// using only export IStatusControl and we would require each IStatusControl to
-			//    [Export(typeof(DotSpatial.Data.IProgressHandler))]
-			// To get that working.
+			
 			DataManager.DefaultDataManager.ProgressHandler = this.ProgressHandler;
 		}
 
@@ -620,7 +603,7 @@ namespace DotSpatial.Controls
 				// UpdateSplashScreen("Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit));
 				message = "Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit);
 				if (!DirectoryCatalogExists(catalog, dir))
-					TryLoadingCatalog(catalog, new DirectoryCatalog(dir));
+					Loader.TryLoadingCatalog(catalog, new DirectoryCatalog(dir));
 			}
 
 			return catalog;
@@ -712,11 +695,9 @@ namespace DotSpatial.Controls
 			foreach (var dir in directories)
 			{
 				Trace.WriteLine("Cataloging: " + dir);
-				//UpdateSplashScreen("Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit));
 				message = "Cataloging: " + PrefixWithEllipsis(dir, SplashDirectoryMessageLimit);
-				// todo: consider using a file system watcher if it would provider better performance.
 				if (!DirectoryCatalogExists(catalog, dir))
-					TryLoadingCatalog(catalog, new DirectoryCatalog(dir));
+					Loader.TryLoadingCatalog(catalog, new DirectoryCatalog(dir));
 			}
 		}
 
@@ -735,7 +716,7 @@ namespace DotSpatial.Controls
 				h(this, ea);
 		}
 
-		private string PrefixWithEllipsis(string text, int length)
+		private static string PrefixWithEllipsis(string text, int length)
 		{
 			if (text.Length <= length) return text;
 
@@ -747,28 +728,7 @@ namespace DotSpatial.Controls
 			LocateExtensions(catalog);
 		}
 
-		private static void TryLoadingCatalog(AggregateCatalog catalog, ComposablePartCatalog cat)
-		{
-			try
-			{
-				// We call Parts.Count simply to load the dlls in this directory, so that we can determine whether they will load properly.
-				if (cat.Parts.Any())
-					catalog.Catalogs.Add(cat);
-			}
-			catch (ReflectionTypeLoadException ex)
-			{
-				Type type = ex.Types[0];
-				string typeAssembly;
-				if (type != null)
-					typeAssembly = type.Assembly.ToString();
-				else
-					typeAssembly = String.Empty;
-
-				string message = String.Format("Skipping extension {0}. {1}", typeAssembly, ex.LoaderExceptions.First().Message);
-				Trace.WriteLine(message);
-				MessageBox.Show(message);
-			}
-		}
+		
 
 		public void UpdateSplashScreen(string text)
 		{
@@ -779,16 +739,4 @@ namespace DotSpatial.Controls
 		#endregion Methods
 	}
 
-	public class MapChangedEventArgs : EventArgs
-	{
-		public IMap OldValue { get; private set; }
-
-		public IMap NewValue { get; private set; }
-
-		public MapChangedEventArgs(IMap oldValue, IMap newValue)
-		{
-			OldValue = oldValue;
-			NewValue = newValue;
-		}
-	}
 }
