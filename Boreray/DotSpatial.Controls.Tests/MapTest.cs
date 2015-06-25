@@ -15,16 +15,10 @@ using DotSpatial.Symbology;
 
 namespace DotSpatial.Controls.Tests
 {
-    /// <summary>
-    ///This is a test class for MapTest and is intended
-    ///to contain all MapTest Unit Tests
-    ///</summary>
+    
     [TestClass]
     public class MapTest
     {
-        /// <summary>
-        ///A test for ZoomToMaxExtent
-        ///</summary>
         [TestMethod]
         public void ZoomToMaxExtentTest()
         {
@@ -37,9 +31,6 @@ namespace DotSpatial.Controls.Tests
             map.ZoomToMaxExtent();
         }
 
-        /// <summary>
-        /// A test to find out whether the default projection of a new map is WGS84.
-        /// </summary>
         [TestMethod]
         public void DefaultProjectionIsWgs84Test()
         {
@@ -48,11 +39,8 @@ namespace DotSpatial.Controls.Tests
             Assert.AreEqual(map.Projection, KnownCoordinateSystems.Geographic.World.WGS1984);
         }
 
-        /// <summary>
-        /// A test to find out if the ProjectionChanged() event fires when the ProjectionEsriString
-        /// property of the map is changed.
-        /// </summary>
-        [TestMethod]
+    
+		[TestMethod]
         public void ProjectionChangedEventFireTest()
         {
             bool eventIsFired = false;
@@ -68,52 +56,39 @@ namespace DotSpatial.Controls.Tests
             Assert.IsTrue(eventIsFired, "the ProjectionChanged event should be fired when Map.ProjectionEsriString is changed.");
         }
 
-        /// <summary>
-        /// Test if the new GetAllLayers() method returns the correct number of layers if the map has groups
-        /// </summary>
-        [TestMethod]
+        
+		[TestMethod]
         public void GetAllLayersTest()
         {
-            var map = new Map();
-            var group = new MapGroup();
-            map.Layers.Add(group);
-            group.Layers.Add(new MapPolygonLayer());
-            group.Layers.Add(new MapLineLayer());
-            group.Layers.Add(new MapPointLayer());
-
-            //add a nested group
-            var group2 = new MapGroup();
-            group.Layers.Add(group2);
-            group2.Layers.Add(new MapPointLayer());
-            group2.Layers.Add(new MapLineLayer());
-            group2.Layers.Add(new MapPolygonLayer());
-
-            List<ILayer> layerList = map.GetAllLayers();
+			var map = CreateMapWithNestedGroup();
+			List<ILayer> layerList = map.GetAllLayers();
             Assert.AreEqual(layerList.Count, 6);
         }
 
-        /// <summary>
-        /// Test if the new GetAllLayers() method returns the correct number of layers if the map has groups
-        /// </summary>
         [TestMethod]
         public void GetAllGroupsTest()
         {
-            var map = new Map();
-            var group = new MapGroup();
-            map.Layers.Add(group);
-            group.Layers.Add(new MapPolygonLayer());
-            group.Layers.Add(new MapLineLayer());
-            group.Layers.Add(new MapPointLayer());
-
-            //add a nested group
-            var group2 = new MapGroup();
-            group.Layers.Add(group2);
-            group2.Layers.Add(new MapPointLayer());
-            group2.Layers.Add(new MapLineLayer());
-            group2.Layers.Add(new MapPolygonLayer());
-
-            List<IMapGroup> groupList = map.GetAllGroups();
+            Map map = CreateMapWithNestedGroup();
+	        List<IMapGroup> groupList = map.GetAllGroups();
             Assert.AreEqual(groupList.Count, 2);
         }
+
+	    private static Map CreateMapWithNestedGroup()
+	    {
+			Map map = new Map();
+		    MapGroup group = CreateMapGroup();
+		    map.Layers.Add(group);
+		    group.Layers.Add(CreateMapGroup());
+		    return map;
+	    }
+
+	    private static MapGroup CreateMapGroup()
+	    {
+		    var group = new MapGroup();
+		    group.Layers.Add(new MapPolygonLayer());
+		    group.Layers.Add(new MapLineLayer());
+		    group.Layers.Add(new MapPointLayer());
+		    return group;
+	    }
     }
 }

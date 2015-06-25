@@ -39,6 +39,10 @@ namespace DotSpatial.Controls
 		public static Func<MapArgs, IPointSymbolizer, double> DefineScale = LineLayerHelper.DefineScale;
 		public static Func<Matrix, Point, Matrix> CreateTranslateMatrix = PointLayerHelper.CreateTranslateMatrix ;
 
+		public static Func<List<Extent>, double[], List<int>> CreateDrawListFromVerts =
+			PointLayerHelper.CreateDrawListFromVerts;
+		public static Func<List<Extent>,List<ShapeRange>, List<int>> CreateDrawListFromShape =
+			PointLayerHelper.CreateDrawListFromShape; 
 		#region Events
 
 		/// <summary>
@@ -113,11 +117,11 @@ namespace DotSpatial.Controls
 		/// <param name="regions">The geographic regions to draw</param>
 		public virtual void DrawRegions(MapArgs args, List<Extent> regions)
 		{
-			// First determine the number of features we are talking about based on region.
+			
 			List<Rectangle> clipRects = args.ProjToPixel(regions);
 			if (EditMode)
 			{
-				var drawList = CreateDrawList(regions);
+				List<IFeature> drawList = CreateDrawList(regions);
 				DrawFeatures(args, drawList, clipRects);
 			}
 			else
@@ -136,37 +140,7 @@ namespace DotSpatial.Controls
 			}
 		}
 
-		private static List<int> CreateDrawListFromShape(List<Extent> regions,  List<ShapeRange> shapes)
-		{
-			List<int> drawList = new List<int>();
-			for (int shp = 0; shp < shapes.Count; shp++)
-			{
-				foreach (Extent region in regions)
-				{
-					if (!shapes[shp].Extent.Intersects(region)) continue;
-					drawList.Add(shp);
-					break;
-				}
-			}
-			return drawList;
-			
-		}
-
-		private static List<int> CreateDrawListFromVerts(List<Extent> regions, double[] verts)
-		{
-			List<int> drawList = new List<int>();
-			for (int shp = 0; shp < verts.Length/2; shp++)
-			{
-				foreach (Extent extent in regions)
-				{
-					if (extent.Intersects(verts[shp*2], verts[shp*2 + 1]))
-					{
-						drawList.Add(shp);
-					}
-				}
-			}
-			return drawList;
-		}
+		
 
 		private List<IFeature> CreateDrawList(List<Extent> regions)
 		{
@@ -372,7 +346,7 @@ namespace DotSpatial.Controls
 
 			Bitmap normalSymbol = new Bitmap((int)(size.Width * scaleSize) + 1, (int)(size.Height * scaleSize) + 1);
 			Graphics bg = Graphics.FromImage(normalSymbol);
-			bg.SmoothingMode = GetSmoothingMode(category.Symbolizer);
+			bg.SmoothingMode = category.Symbolizer.GetSmoothingMode();
 			Matrix trans = bg.Transform;
 
 			trans.Translate(((float)(size.Width * scaleSize) / 2 - 1), (float)(size.Height * scaleSize) / 2 - 1);
@@ -384,7 +358,7 @@ namespace DotSpatial.Controls
 
 			Bitmap selectedSymbol = new Bitmap((int)(selSize.Width * scaleSize + 1), (int)(selSize.Height * scaleSize + 1));
 			Graphics sg = Graphics.FromImage(selectedSymbol);
-			sg.SmoothingMode = GetSmoothingMode(category.SelectionSymbolizer);
+			sg.SmoothingMode = category.SelectionSymbolizer.GetSmoothingMode();
 			Matrix trans2 = sg.Transform;
 			trans2.Translate((float)selSize.Width / 2, (float)selSize.Height / 2);
 			sg.Transform = trans2;
@@ -449,7 +423,7 @@ namespace DotSpatial.Controls
 			IPointSymbolizer ps = CreateSymbolizerFastDrawn(state);
 			if (ps == null)
 				return true;
-			g.SmoothingMode = GetSmoothingMode(ps);
+			g.SmoothingMode = ps.GetSmoothingMode();
 			
 			foreach (int index in indices)
 			{
@@ -560,7 +534,7 @@ namespace DotSpatial.Controls
 					if (ps == null)
 						return;
 
-					g.SmoothingMode = GetSmoothingMode(ps);
+					g.SmoothingMode = ps.GetSmoothingMode();
 					DrawFeature(e, feature, ps, g, origTransform);
 				}
 			}
@@ -598,10 +572,7 @@ namespace DotSpatial.Controls
 			ps.Draw(g, scaleSize);
 		}
 
-		private static SmoothingMode GetSmoothingMode(IFeatureSymbolizer ps)
-		{
-			return ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
-		}
+		
 
 
 		#endregion Private  Methods

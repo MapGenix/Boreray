@@ -133,6 +133,7 @@
     <Compile Include="MapLayerCollectionTest.cs" />
     <Compile Include="MapPolygonLayerTest.cs" />
     <Compile Include="MapTest.cs" />
+    <Compile Include="PointLayerHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

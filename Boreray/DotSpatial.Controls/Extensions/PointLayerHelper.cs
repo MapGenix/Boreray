@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Drawing2D;
+using DotSpatial.Data;
 using DotSpatial.Symbology;
 using DotSpatial.Topology;
 using Point = System.Drawing.Point;
@@ -59,5 +61,42 @@ namespace DotSpatial.Controls.Extensions
 			};
 		}
 
+		public static SmoothingMode GetSmoothingMode(this IFeatureSymbolizer ps)
+		{
+			return ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+		}
+
+		public static List<int> CreateDrawListFromShape(List<Extent> regions, List<ShapeRange> shapes)
+		{
+			List<int> drawList = new List<int>();
+			for (int shp = 0; shp < shapes.Count; shp++)
+			{
+				foreach (Extent region in regions)
+				{
+					if (!shapes[shp].Extent.Intersects(region)) 
+						continue;
+					drawList.Add(shp);
+					break;
+				}
+			}
+			return drawList;
+
+		}
+
+		public static List<int> CreateDrawListFromVerts(List<Extent> regions, double[] verts)
+		{
+			List<int> drawList = new List<int>();
+			for (int shp = 0; shp < verts.Length / 2; shp++)
+			{
+				foreach (Extent extent in regions)
+				{
+					if (extent.Intersects(verts[shp * 2], verts[shp * 2 + 1]))
+					{
+						drawList.Add(shp);
+					}
+				}
+			}
+			return drawList;
+		}
 	}
 }
