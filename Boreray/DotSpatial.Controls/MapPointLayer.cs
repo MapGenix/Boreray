@@ -122,23 +122,23 @@ namespace DotSpatial.Controls
 			}
 			else
 			{
-				List<int> drawList = new List<int>();
+				List<int> drawList;
 				
 				if (DataSet.FeatureType == FeatureType.Point)
 				{
-					CreateDrawListFromVerts(regions, DataSet.Vertex, drawList);
+					drawList = CreateDrawListFromVerts(regions, DataSet.Vertex);
 				}
 				else
 				{
-					CreateDrawListFromShape(regions, drawList);
+					drawList = CreateDrawListFromShape(regions, DataSet.ShapeIndices);
 				}
 				DrawFeatures(args, drawList, clipRects);
 			}
 		}
 
-		private void CreateDrawListFromShape(List<Extent> regions, List<int> drawList)
+		private static List<int> CreateDrawListFromShape(List<Extent> regions,  List<ShapeRange> shapes)
 		{
-			List<ShapeRange> shapes = DataSet.ShapeIndices;
+			List<int> drawList = new List<int>();
 			for (int shp = 0; shp < shapes.Count; shp++)
 			{
 				foreach (Extent region in regions)
@@ -148,10 +148,13 @@ namespace DotSpatial.Controls
 					break;
 				}
 			}
+			return drawList;
+			
 		}
 
-		private static void CreateDrawListFromVerts(List<Extent> regions, double[] verts, List<int> drawList)
+		private static List<int> CreateDrawListFromVerts(List<Extent> regions, double[] verts)
 		{
+			List<int> drawList = new List<int>();
 			for (int shp = 0; shp < verts.Length/2; shp++)
 			{
 				foreach (Extent extent in regions)
@@ -162,6 +165,7 @@ namespace DotSpatial.Controls
 					}
 				}
 			}
+			return drawList;
 		}
 
 		private List<IFeature> CreateDrawList(List<Extent> regions)
@@ -186,8 +190,10 @@ namespace DotSpatial.Controls
 		/// will replace content with transparent pixels.</param>
 		public void Clear(List<Rectangle> rectangles, Color color)
 		{
-			if (BackBuffer == null) return;
+			if (BackBuffer == null) 
+				return;
 			Graphics g = Graphics.FromImage(BackBuffer);
+			
 			foreach (Rectangle r in rectangles)
 			{
 				if (r.IsEmpty == false)
@@ -366,7 +372,7 @@ namespace DotSpatial.Controls
 
 			Bitmap normalSymbol = new Bitmap((int)(size.Width * scaleSize) + 1, (int)(size.Height * scaleSize) + 1);
 			Graphics bg = Graphics.FromImage(normalSymbol);
-			bg.SmoothingMode = category.Symbolizer.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+			bg.SmoothingMode = GetSmoothingMode(category.Symbolizer);
 			Matrix trans = bg.Transform;
 
 			trans.Translate(((float)(size.Width * scaleSize) / 2 - 1), (float)(size.Height * scaleSize) / 2 - 1);
@@ -378,7 +384,7 @@ namespace DotSpatial.Controls
 
 			Bitmap selectedSymbol = new Bitmap((int)(selSize.Width * scaleSize + 1), (int)(selSize.Height * scaleSize + 1));
 			Graphics sg = Graphics.FromImage(selectedSymbol);
-			sg.SmoothingMode = category.SelectionSymbolizer.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
+			sg.SmoothingMode = GetSmoothingMode(category.SelectionSymbolizer);
 			Matrix trans2 = sg.Transform;
 			trans2.Translate((float)selSize.Width / 2, (float)selSize.Height / 2);
 			sg.Transform = trans2;
@@ -506,7 +512,7 @@ namespace DotSpatial.Controls
 
 		private void DrawFeatures(MapArgs e, IEnumerable<int> indices)
 		{
-			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
+			Graphics g = GetGraphics(e);
 			Matrix origTransform = g.Transform;
 
 			if (!DrawnStatesNeeded)
@@ -528,7 +534,7 @@ namespace DotSpatial.Controls
 
 		private void DrawFeatures(MapArgs e, IEnumerable<IFeature> features)
 		{
-			Graphics g = e.Device ?? Graphics.FromImage(BackBuffer);
+			Graphics g = GetGraphics(e);
 			Matrix origTransform = g.Transform;
 			
 			IDictionary<IFeature, IDrawnState> states = DrawingFilter.DrawnStates;
@@ -569,6 +575,11 @@ namespace DotSpatial.Controls
 			}
 		}
 
+		private Graphics GetGraphics(MapArgs e)
+		{
+			return e.Device ?? Graphics.FromImage(BackBuffer);
+		}
+
 		private static void DrawFeature(MapArgs e, IFeature feature, IPointSymbolizer ps, Graphics g,
 			 Matrix origTransform)
 		{
@@ -592,9 +603,6 @@ namespace DotSpatial.Controls
 			return ps.Smoothing ? SmoothingMode.AntiAlias : SmoothingMode.None;
 		}
 
-		
-
-		
 
 		#endregion Private  Methods
 
@@ -633,32 +641,6 @@ namespace DotSpatial.Controls
 			get { return base.LabelLayer as IMapLabelLayer; }
 			set { base.LabelLayer = value; }
 		}
-
-		/// <summary>
-		/// Attempts to create a new GeoPointLayer using the specified file.  If the filetype is not
-		/// does not generate a point layer, an exception will be thrown.
-		/// </summary>
-		/// <param name="fileName">A string fileName to create a point layer for.</param>
-		/// <param name="progressHandler">Any valid implementation of IProgressHandler for receiving progress messages</param>
-		/// <returns>A GeoPointLayer created from the specified fileName.</returns>
-		[Obsolete("Not Used")]
-		public static new MapPointLayer OpenFile(string fileName, IProgressHandler progressHandler)
-		{
-			ILayer fl = LayerManager.DefaultLayerManager.OpenLayer(fileName, progressHandler);
-			return fl as MapPointLayer;
-		}
-
-		/// <summary>
-		/// Attempts to create a new GeoPointLayer using the specified file.  If the filetype is not
-		/// does not generate a point layer, an exception will be thrown.
-		/// </summary>
-		/// <param name="fileName">A string fileName to create a point layer for.</param>
-		/// <returns>A GeoPointLayer created from the specified fileName.</returns>
-		[Obsolete("Not Used")]
-		public static new MapPointLayer OpenFile(string fileName)
-		{
-			IFeatureLayer fl = LayerManager.DefaultLayerManager.OpenVectorLayer(fileName);
-			return fl as MapPointLayer;
-		}
+	
 	}
 }
